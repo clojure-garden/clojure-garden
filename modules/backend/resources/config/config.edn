@@ -1,0 +1,39 @@
+{:platform.system/jetty {:handler #ig/ref :platform.system/app-runner
+                         :host            "0.0.0.0"
+                         :port            8080}
+
+ :platform.system/app-runner {:db #ig/ref :platform.system/database}
+
+ :platform.system/database-migrator {:store                        :database
+                                     :migration-dir                "database/migrations"
+                                     :migration-table-name         "schema_migrations"
+                                     :init-in-transaction?         true
+                                     :db                   #ig/ref :platform.system/database}
+
+ :platform.system/database {:auto-commit                 true
+                            :read-only                   false
+                            :connection-timeout          30000
+                            :validation-timeout          5000
+                            :idle-timeout                600000
+                            :max-lifetime                1800000
+                            :minimum-idle                10
+                            :maximum-pool-size           10
+                            :pool-name                   "db-pool"
+                            :adapter                     "postgresql"
+                            :username           #profile {:dev         #env BACKEND_PG_USER
+                                                          :stage       #env DATABASE_USER}
+                            :password           #profile {:dev         #env BACKEND_PG_PASSWORD
+                                                          :stage       #env DATABASE_PASSWORD}
+                            :database-name      #profile {:dev         #env BACKEND_PG_DATABASE_NAME
+                                                          :stage       #env DATABASE_NAME}
+                            :server-name        #profile {:dev              "localhost"
+                                                          :stage       #env DATABASE_HOST}
+                            :port-number        #profile {:dev   #long #env BACKEND_PG_PORT
+                                                          :stage #long #env DATABASE_PORT}
+                            :register-mbeans             false}
+
+ :platform.system/github-client {:server-name                 :service-github
+                                 :github-graphql-url          "https://api.github.com/graphql"
+                                 :github-rest-url             "https://api.github.com"
+                                 :oauth-token        #profile {:dev   #env BACKEND_GITHUB_OAUTH_TOKEN
+                                                               :stage #env GITHUB_OAUTH_TOKEN}}}

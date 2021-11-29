@@ -1,0 +1,17 @@
+[config]
+exclude-merge-commits=true
+check-summary-length=true
+summary-length=70
+
+[matchers]
+provide-issue-id="(?:feat|fix|docs|refactor|build|test|style|BREAKING CHANGE): \\(\\d{1,}\\) .*?"
+
+[examples]
+features="""feat: (1) add great feature"""
+bugfix="""fix: (2) remove bug"""
+documentation="""docs: (3) add documentation for..."""
+refactoring="""refactor: (4) simplify logic"""
+build="""build: (5) update CI or build tooling"""
+test="""test: (6) expand for edge case"""
+style="""style: (7) `lein cljfmt fix`"""
+"breaking changes"="""BREAKING CHANGE: (8) backwards incompatible change to public API"""

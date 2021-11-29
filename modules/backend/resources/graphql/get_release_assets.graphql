@@ -1,0 +1,23 @@
+query GetReleaseAssets ($releaseId: ID!,
+                        $pageSize: Int!,
+                        $afterCursor: String) {
+    node (id: $releaseId) {
+        ... on Release {
+            id
+            releaseAssets(first: $pageSize, after: $afterCursor) {
+                edges {
+                    node {
+                        id
+                        name
+                        downloadCount
+                    }
+                }
+                pageInfo {
+                    endCursor
+                    hasNextPage
+                }
+            }
+
+        }
+    }
+}

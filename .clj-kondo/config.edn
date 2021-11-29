@@ -1,0 +1,25 @@
+{:output  {:exclude-files []}
+
+ :linters {:consistent-alias
+           {:aliases {clojure.pprint     pprint
+                      clojure.set        set
+                      clojure.string     str}}
+
+           :unresolved-namespace
+           {:exclude [user criterium.core]}
+
+           :unresolved-symbol
+           {:exclude [(cljs.test/are [thrown? thrown-with-msg?])
+                      (cljs.test/is [thrown? thrown-with-msg?])
+                      (clojure.test/are [thrown? thrown-with-msg?])
+                      (clojure.test/is [thrown? thrown-with-msg?])]}
+
+           :unsorted-required-namespaces
+           {:level :warning}
+
+           :unused-referred-var
+           {:exclude {cljs.test    [deftest is testing use-fixtures]
+                      clojure.test [deftest is testing use-fixtures]}}}
+
+ :skip-comments true
+ :hooks   {}}

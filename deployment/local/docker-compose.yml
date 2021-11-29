@@ -1,0 +1,86 @@
+version: "3.9"
+services:
+
+  backend-server:
+    image: clojure-garden-server:latest
+    build:
+      context: ../../
+      dockerfile: "./deployment/local/backend/Dockerfile"
+    container_name: "clojure-garden-backend-server"
+    hostname: backend-server
+    ports:
+      - "${BACKEND_PORT}:8080"
+    environment:
+      DATABASE_NAME: ${BACKEND_PG_DATABASE_NAME}
+      DATABASE_PORT: 5432
+      DATABASE_USER: ${BACKEND_PG_USER}
+      DATABASE_PASSWORD: ${BACKEND_PG_PASSWORD}
+      DATABASE_HOST: backend-postgres
+      GITHUB_OAUTH_TOKEN: ${BACKEND_GITHUB_OAUTH_TOKEN}
+    networks:
+      - backendnet-1
+    depends_on:
+      - backend-postgres
+
+
+  backend-postgres:
+    image: postgres:13-alpine
+    container_name: "clojure-garden-backend-postgres"
+    hostname: backend-postgres
+    ports:
+      - "${BACKEND_PG_PORT}:5432"
+    environment:
+      POSTGRES_DB: ${BACKEND_PG_DATABASE_NAME}
+      POSTGRES_USER: ${BACKEND_PG_USER}
+      POSTGRES_PASSWORD: ${BACKEND_PG_PASSWORD}
+      PGDATA: /var/lib/postgresql/data
+    networks:
+      - metanet-1
+      - backendnet-1
+    volumes:
+      - "./${BACKEND_PG_DATA}:/var/lib/postgresql/data"
+
+
+  metabase:
+    image: metabase/metabase:v0.41.2
+    container_name: "clojure-garden-metabase"
+    hostname: metabase
+    ports:
+      - "${METABASE_PORT}:3000"
+    environment:
+      MB_DB_TYPE: postgres
+      MB_DB_DBNAME: ${METABASE_PG_DATABASE_NAME}
+      MB_DB_PORT: 5432
+      MB_DB_USER: ${METABASE_PG_USER}
+      MB_DB_PASS: ${METABASE_PG_PASSWORD}
+      MB_DB_HOST: metabase-postgres
+    networks:
+      - metanet-1
+    depends_on:
+      - metabase-postgres
+    volumes:
+      - /dev/urandom:/dev/random:ro
+
+
+  metabase-postgres:
+    image: postgres:13-alpine
+    container_name: "clojure-garden-metabase-postgres"
+    hostname: metabase-postgres
+    ports:
+      - "${METABASE_PG_PORT}:5432"
+    environment:
+      POSTGRES_DB: ${METABASE_PG_DATABASE_NAME}
+      POSTGRES_USER: ${METABASE_PG_USER}
+      POSTGRES_PASSWORD: ${METABASE_PG_PASSWORD}
+      PGDATA: /var/lib/postgresql/data
+    networks:
+      - metanet-1
+    volumes:
+      - "./${METABASE_PG_DATA}:/var/lib/postgresql/data"
+
+
+networks:
+  metanet-1:
+    driver: bridge
+  backendnet-1:
+    driver: bridge

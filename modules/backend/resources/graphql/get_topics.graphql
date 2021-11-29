@@ -1,0 +1,22 @@
+query GetTopics ($repoOwner: String!,
+                 $repoName: String!,
+                 $pageSize: Int!,
+                 $afterCursor: String) {
+    repository(owner: $repoOwner, name: $repoName) {
+        repositoryTopics(first: $pageSize, after: $afterCursor) {
+            totalCount
+            edges {
+                node {
+                    topic {
+                        name
+                        stargazerCount
+                    }
+                }
+            }
+            pageInfo {
+                endCursor
+                hasNextPage
+            }
+        }
+    }
+}

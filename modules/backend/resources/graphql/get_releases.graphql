@@ -1,0 +1,23 @@
+query GetReleases ($repoOwner: String!,
+                   $repoName: String!,
+                   $pageSize: Int!,
+                   $afterCursor: String) {
+    repository(owner: $repoOwner, name: $repoName) {
+        releases(orderBy: {direction:DESC, field:CREATED_AT}, first: $pageSize, after: $afterCursor) {
+            totalCount
+            edges {
+                node {
+                    id
+                    name
+                    tagName
+                    createdAt
+                    releaseAssets { totalCount }
+                }
+            }
+            pageInfo {
+                endCursor
+                hasNextPage
+            }
+        }
+    }
+}

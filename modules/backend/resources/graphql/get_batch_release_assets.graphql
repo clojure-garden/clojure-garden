@@ -1,0 +1,18 @@
+query GetBatchReleaseAssets ($releaseIds: [ID!]!,
+                             $pageSize: Int!) {
+    nodes (ids: $releaseIds) {
+        ... on Release {
+            id
+            releaseAssets(first: $pageSize) {
+                edges {
+                    node {
+                        id
+                        name
+                        downloadCount
+                    }
+                }
+            }
+
+        }
+    }
+}

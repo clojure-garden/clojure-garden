@@ -1,0 +1,24 @@
+query GetIssues ($repoOwner: String!,
+                 $repoName: String!,
+                 $pageSize: Int!,
+                 $afterCursor: String) {
+    repository(owner: $repoOwner, name: $repoName) {
+        issues(first: $pageSize, after: $afterCursor) {
+            totalCount
+            edges {
+                node {
+                    id
+                    title
+                    createdAt
+                    url
+                    closed
+                    closedAt
+                }
+            }
+            pageInfo {
+                endCursor
+                hasNextPage
+            }
+        }
+    }
+}

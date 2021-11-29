@@ -1,0 +1,21 @@
+query GetLanguages ($repoOwner: String!,
+                    $repoName: String!,
+                    $pageSize: Int!,
+                    $afterCursor: String) {
+    repository(owner: $repoOwner, name: $repoName) {
+        languages(first: $pageSize, after: $afterCursor) {
+            totalCount
+            edges {
+                size
+                node {
+                    name
+                    color
+                }
+            }
+            pageInfo {
+                endCursor
+                hasNextPage
+            }
+        }
+    }
+}

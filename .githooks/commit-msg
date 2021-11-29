@@ -1,0 +1,12 @@
+#!/bin/sh
+
+### validate for conventional commits
+
+commit_linter=$(which gommit)
+# Check availability of the commit linter
+if [ -z "$commit_linter" ]
+then
+  1>&2 echo "$commit_linter not found. Commit message will not be checked"
+  exit 0
+fi
+"$commit_linter" check message "$(cat "$1")";

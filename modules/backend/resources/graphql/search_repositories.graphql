@@ -1,0 +1,20 @@
+query SearchRepositories($searchQuery: String!,
+             $pageSize: Int!,
+             $afterCursor: String) {
+    search(query: $searchQuery, type: REPOSITORY, first: $pageSize, after: $afterCursor) {
+        repositoryCount
+        edges {
+            node {
+                ... on Repository {
+                    url
+                    updatedAt
+                    pushedAt
+                }
+            }
+        }
+        pageInfo {
+          endCursor
+          hasNextPage
+      }
+    }
+}

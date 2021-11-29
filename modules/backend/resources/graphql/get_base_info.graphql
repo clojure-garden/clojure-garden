@@ -1,0 +1,36 @@
+query GetBaseInfo($repoOwner: String!,
+                  $repoName: String!) {
+    repository(owner: $repoOwner, name: $repoName) {
+        nameWithOwner
+        url
+        homepageUrl
+        mirrorUrl
+
+        description
+        shortDescriptionHTML
+        primaryLanguage { name color }
+
+        createdAt
+        pushedAt
+        updatedAt
+
+        isFork
+        isMirror
+        isArchived
+        isLocked
+        lockReason
+
+        hasWikiEnabled
+
+        stargazerCount
+        forkCount
+
+        defaultBranchRef { name }
+        licenseInfo {
+            name
+            nickname
+            url
+            pseudoLicense
+        }
+    }
+}
