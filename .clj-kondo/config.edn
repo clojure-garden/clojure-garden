@@ -1,9 +1,12 @@
 {:output  {:exclude-files []}
 
+ :config-paths ["com.github.seancorfield/next.jdbc"]
+
  :linters {:consistent-alias
            {:aliases {clojure.pprint     pprint
                       clojure.set        set
-                      clojure.string     str}}
+                      clojure.string     str
+                      next.jdbc          jdbc}}
 
            :unresolved-namespace
            {:exclude [user criterium.core]}
