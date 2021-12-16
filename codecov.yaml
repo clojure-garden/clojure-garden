@@ -1,0 +1,24 @@
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+      backend:
+        # FIXME [2021-12-17, ilshat@sultanov.team]: increase to 80%
+        target: 10%
+        flags:
+          - backend
+
+comment:
+  layout: "reach, diff, flags, files"
+  behavior: default
+  require_changes: false
+  require_base: yes
+  require_head: yes
+  branches: null
+
+flags:
+  backend:
+    paths:
+      - modules/backend
+    carryforward: true
