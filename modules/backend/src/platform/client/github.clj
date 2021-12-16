@@ -353,7 +353,7 @@
 
 (defn get-release-download-count
   "Retrieve the number of downloads for the specified release."
-  [{:keys [assets] :as release}]
+  [{:keys [assets] :as _release}]
   (reduce (fn [acc asset]
             (+ acc (:download-count asset)))
           0 assets))
@@ -387,8 +387,8 @@
 
 
 (defn get-total-download-count
-  [releases]
   "Retrieve the total number of downloads for the releases."
+  [releases]
   (reduce (fn [acc release]
             (+ acc (:download-count release)))
           0 releases))
@@ -441,7 +441,7 @@
 
 (defn get-documentation
   "Download the contents of doc files (based on API urls from the community metrics)."
-  [{files-info :files :as community-metrics}]
+  [{files-info :files :as _community-metrics}]
   (let [files-info (select-keys files-info [:readme :contributing
                                             :issue-template :pull-request-template
                                             :code-of-conduct-file])]

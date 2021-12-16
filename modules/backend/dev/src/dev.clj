@@ -1,21 +1,19 @@
 (ns dev
   (:require
-    [clojure.pprint :as pprint]
-    [clojure.repl :refer :all]
-    [clojure.tools.namespace.repl :refer [refresh]]
+    [clojure.tools.namespace.repl :as tools.repl]
     [integrant.core :as ig]
     [integrant.repl :as ig-repl]
     [integrant.repl.state :as ig-state]
     [platform.main :as system]))
 
 
-(clojure.tools.namespace.repl/set-refresh-dirs "dev/src" "src" "test")
+(tools.repl/set-refresh-dirs "src" "dev/src" "test/src")
 
 
 (defn integrant-prep!
   "Load Integrant configuration to be used to start the system.
    Available profile values: :dev, :stage, :test, :prod."
-  [profile & {:keys [modules] :as opts}]
+  [profile & {:keys [modules]}]
   (ig-repl/set-prep!
     (fn []
       (let [modules (or modules system/default-modules)]
@@ -43,7 +41,7 @@
   ([profile] (integrant-prep! profile) (ig-repl/reset-all)))
 
 
-(defn stop
+(defn halt
   "Shutdown all services."
   []
   (ig-repl/halt))
@@ -61,11 +59,15 @@
   ig-state/config)
 
 
+(defn db
+  []
+  (get-in (system) [:platform.system/database :datasource]))
+
+
 (comment
   (go)
   (reset)
   (reset-all)
   (config)
   (system)
-  (stop)
-  (pprint/pprint ig-state/system))
+  (halt))

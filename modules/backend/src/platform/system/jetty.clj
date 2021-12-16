@@ -1,7 +1,10 @@
 (ns platform.system.jetty
   (:require
     [integrant.core :as ig]
-    [ring.adapter.jetty :as jetty]))
+    [ring.adapter.jetty :as jetty])
+  (:import
+    (org.eclipse.jetty.server
+      Server)))
 
 
 (defmethod ig/prep-key :platform.system/jetty [_ config]
@@ -14,5 +17,5 @@
     (jetty/run-jetty handler options)))
 
 
-(defmethod ig/halt-key! :platform.system/jetty [_ server]
+(defmethod ig/halt-key! :platform.system/jetty [_ ^Server server]
   (.stop server))
