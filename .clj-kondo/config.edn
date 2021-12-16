@@ -2,6 +2,8 @@
 
  :config-paths ["com.github.seancorfield/next.jdbc"]
 
+ :lint-as {graphql-builder.parser/defgraphql clojure.core/def}
+
  :linters {:consistent-alias
            {:aliases {clojure.pprint     pprint
                       clojure.set        set
