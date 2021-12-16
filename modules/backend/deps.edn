@@ -1,0 +1,48 @@
+{:paths   ["src" "resources"]
+
+ :deps    {org.clojure/clojure                 {:mvn/version "1.10.3"}
+           org.clojure/core.async              {:mvn/version "1.5.648"}
+           org.slf4j/slf4j-log4j12             {:mvn/version "1.7.32"}
+           org.slf4j/slf4j-api                 {:mvn/version "1.7.32"}
+           org.clojure/tools.logging           {:mvn/version "1.2.2"}
+           ring/ring-core                      {:mvn/version "1.9.4"}
+           ring/ring-jetty-adapter             {:mvn/version "1.9.4"}
+           floatingpointio/graphql-builder     {:mvn/version "0.1.14"}
+           re-graph/re-graph                   {:mvn/version "0.1.16"}
+           cheshire/cheshire                   {:mvn/version "5.10.1"}
+           hato/hato                           {:mvn/version "0.8.2"}
+           camel-snake-kebab/camel-snake-kebab {:mvn/version "0.4.2"}
+           integrant/integrant                 {:mvn/version "0.8.0"}
+           metosin/reitit                      {:mvn/version "0.5.15"}
+           org.postgresql/postgresql           {:mvn/version "42.3.1"}
+           hikari-cp/hikari-cp                 {:mvn/version "2.13.0"}
+           migratus/migratus                   {:mvn/version "1.3.5"}
+           com.github.seancorfield/next.jdbc   {:mvn/version "1.2.761"}
+           com.github.seancorfield/honeysql    {:mvn/version "2.1.833"}
+           clj-commons/clj-yaml                {:mvn/version "0.7.107"}
+           aero/aero                           {:mvn/version "1.1.6"}
+           clojure.java-time/clojure.java-time {:mvn/version "0.3.3"}}
+
+ :aliases {:develop          {:extra-paths ["dev/src" "dev/resources"]
+                              :extra-deps  {nrepl/nrepl    {:mvn/version "0.9.0"}
+                                            hashp/hashp    {:mvn/version "0.2.1"}
+                                            integrant/repl {:mvn/version "0.3.2"}}
+                              :main-opts   ["--main" "nrepl.cmdline"]}
+
+           :test             {:extra-paths ["test/src" "test/resources"]
+                              :extra-deps  {lambdaisland/kaocha           {:mvn/version "1.60.972"}
+                                            lambdaisland/kaocha-cloverage {:mvn/version "1.0.75"}}
+                              :main-opts   ["--main" "kaocha.runner"]}
+
+           :test/unit        {:main-opts ["--main" "kaocha.runner" "--focus" "unit"]}
+
+           :test/integration {:main-opts ["--main" "kaocha.runner" "--focus" "integration"]}
+
+           :build            {:extra-paths ["."]
+                              :extra-deps  {io.github.seancorfield/build-clj {:git/tag "v0.6.3" :git/sha "9b8e09b"}}
+                              :ns-default  build}
+
+           :outdated         {:extra-deps {com.github.liquidz/antq {:mvn/version "1.3.0"}}
+                              :main-opts  ["--main" "antq.core"]}
+
+           :outdated/upgrade {:main-opts ["--main" "antq.core" "--upgrade" "--force"]}}}
