@@ -1,10 +1,10 @@
 (ns platform.client.clojars-test
   (:require
-    [clojure.test :refer :all]
+    [clojure.test :refer [deftest testing is]]
     [platform.client.clojars :refer [parse-artifact-url]]))
 
 
-(deftest test-parse-repository-url
+(deftest ^:unit test-parse-repository-url
   (testing "an empty string"
     (is (= nil
            (parse-artifact-url ""))))

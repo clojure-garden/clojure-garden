@@ -1,9 +1,10 @@
 (ns platform.client.clojars
   (:require
     [camel-snake-kebab.core :as csk]
-    [clojure.string :as s]
+    [clojure.set :as set]
+    [clojure.string :as str]
     [clojure.xml :as xml]
-    [platform.client.common :refer [request-rest build-url safe]]))
+    [platform.client.common :refer [request-rest build-url]]))
 
 
 (def ^:private clojars-repo-url "https://clojars.org/repo")
@@ -41,9 +42,9 @@
 
 
 (defn get-package-identifier
-  [url]
   "Extract the group ID and the artifact ID from the specified url.
    If the group ID is missing from the URL, it will copy it from the artifact ID."
+  [url]
   (let [[group-id artifact-id] (parse-artifact-url url)]
     [(or group-id artifact-id) artifact-id]))
 
@@ -51,7 +52,7 @@
 (defn on-clojars-get-group-artifacts-handler
   [{:keys [data errors]}]
   (if-not errors
-    (mapv #(clojure.set/rename-keys % new-artifact-key-namings) data)
+    (mapv #(set/rename-keys % new-artifact-key-namings) data)
     (throw (ex-info "Request to Clojars failed: can't fetch group artifacts"
                     {:errors errors}))))
 
@@ -59,7 +60,7 @@
 (defn on-clojars-get-artifact-handler
   [{:keys [data errors]}]
   (if-not errors
-    (clojure.set/rename-keys data new-artifact-key-namings)
+    (set/rename-keys data new-artifact-key-namings)
     (throw (ex-info "Request to Clojars failed: can't fetch artifact"
                     {:errors errors}))))
 
@@ -94,7 +95,7 @@
   ([artifact-id version]
    (get-artifact-pom artifact-id artifact-id version))
   ([group-id artifact-id version]
-   (let [group-id-path (s/replace group-id #"\." "/")]
+   (let [group-id-path (str/replace group-id #"\." "/")]
      (-> (build-url clojars-repo-url group-id-path artifact-id version (str artifact-id "-" version ".pom"))
          xml/parse
          xml-seq
@@ -104,7 +105,7 @@
 (defn get-pom-extracts
   "Retrieve dependencies and licenses from the specified pom file."
   [group-id artifact-id version]
-  (if-not (s/includes? version "SNAPSHOT")
+  (if-not (str/includes? version "SNAPSHOT")
     (let [pom (get-artifact-pom group-id artifact-id version)]
       (hash-map :licenses (get-pom-objects pom :licenses)
                 :dependencies (mapv #(dissoc % :exclusions) (get-pom-objects pom :dependencies))))

@@ -12,20 +12,20 @@
 
 
 (defn already-pulled?
-  [url datasource]
+  [url db]
   (if-let [[group-id artifact-id] (clojars-client/get-package-identifier url)]
-    (clojars-sql/artifact-exists? group-id artifact-id datasource)
+    (clojars-sql/artifact-exists? db group-id artifact-id)
     (throw (ex-info (str "Invalid Clojars repository URL: " url)
                     {:url url}))))
 
 
 (defn pull-artifact-info
-  [url datasource]
+  [url db]
   (try
     (log/info "Pulling Clojars artifact statistics:" url)
-    (if-not (already-pulled? url datasource)
+    (if-not (already-pulled? url db)
       (let [artifact-info (clojars-client/get-artifact-info url)]
-        (clojars-sql/insert-artifact-info! datasource artifact-info true)
+        (clojars-sql/insert-artifact-info! db artifact-info true)
         (log/info "The artifact" url "statistics pulled!"))
       (log/warn "The artifact" url "is already pulled! Skipping..."))
     (catch ExceptionInfo ex (log/error (ex-message ex) "\n" (ex-data ex)))
@@ -34,7 +34,7 @@
 
 (defn pull-artifact-info-handler
   [req]
-  (let [{{:keys [datasource] :as db-spec} :db
+  (let [{{:keys [datasource]} :db
          {:keys [url]} :params} req]
     (pull-artifact-info url datasource)
     (resp/redirect "/status")))
@@ -44,7 +44,7 @@
   [req]
   (async/thread
     (log/info "Getting a list of Clojars URLs...")
-    (let [{{:keys [datasource] :as db-spec} :db} req
+    (let [{{:keys [datasource]} :db} req
           project-urls (seeder/get-artifact-urls)]
       (log/info (count project-urls) "Clojar URLs will be fetched")
       (doall (map (fn [url]

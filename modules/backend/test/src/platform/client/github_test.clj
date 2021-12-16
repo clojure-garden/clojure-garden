@@ -1,10 +1,14 @@
 (ns platform.client.github-test
   (:require
-    [clojure.test :refer :all]
+    [clojure.test :refer [deftest testing is]]
     [platform.client.github :refer [parse-repository-url]]))
 
 
-(deftest test-parse-repository-url
+(deftest ^:integration dummy-test
+  (is (= 2 2)))
+
+
+(deftest ^:unit test-parse-repository-url
   (testing "an empty string"
     (is (= nil
            (parse-repository-url ""))))
