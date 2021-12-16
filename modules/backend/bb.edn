@@ -1,0 +1,116 @@
+{:min-bb-version
+ "0.6.8"
+
+ :tasks
+ {:requires        ([babashka.fs :as fs]
+                    [babashka.process :as process]
+                    [clojure.string :as str]
+                    [clojure.pprint :as pprint])
+
+  :init            (do
+                     (defn get-env [s]
+                       (System/getenv s))
+
+                     (defn get-property [s]
+                       (System/getProperty s))
+
+                     (defn pretty-print [x]
+                       (binding [pprint/*print-right-margin* 130]
+                         (pprint/pprint x)))
+
+                     (defn execute [command]
+                       (-> command (process/tokenize) (process/process) :out slurp str/trim-newline))
+
+                     (def -zone-id (java.time.ZoneId/of "UTC"))
+                     (def -datetime-formatter java.time.format.DateTimeFormatter/ISO_OFFSET_DATE_TIME)
+                     (def -current-timestamp (java.time.ZonedDateTime/now -zone-id))
+                     (def -build-timestamp (str (.format -current-timestamp -datetime-formatter)))
+                     (def -build-number (execute "git rev-list HEAD --count"))
+                     (def -git-url (execute "git config --get remote.origin.url"))
+                     (def -git-branch (execute "git rev-parse --abbrev-ref HEAD"))
+                     (def -git-sha (execute "git rev-parse --short HEAD"))
+
+                     (def -release? (= "master" -git-branch))
+                     (def -snapshot? (not -release?))
+
+                     (def -version-template (execute "cat ../../version.tmpl"))
+                     (def -version (cond-> (str/replace -version-template "{{build-number}}" -build-number)
+                                     -snapshot? (str "-SNAPSHOT")))
+
+                     (def -config
+                       {:version         -version
+                        :build-number    -build-number
+                        :build-timestamp -build-timestamp
+                        :git-url         -git-url
+                        :git-branch      -git-branch
+                        :git-sha         -git-sha})
+
+                     (def extra-env
+                       {})
+
+                     (defn as-params [params]
+                       (->> params
+                         (seq)
+                         (flatten)
+                         (map (fn [x]
+                                (str/replace (pr-str x) (java.util.regex.Pattern/compile "(\".+\")") "'$1'")))
+                         (str/join \space)))
+
+                     (defn with-params [command]
+                       (->> -config
+                         (as-params)
+                         (str command " "))))
+
+  :enter           (let [{:keys [doc skip-doc?]
+                          :or   {skip-doc? false}} (current-task)]
+                     (when (and doc (not skip-doc?))
+                       (println (format "▸ [clojure-garden/backend v%s] %s" -version doc))))
+
+  ;;;;
+  ;; Tasks
+  ;;;;
+
+  version          {:doc       "Show version"
+                    :skip-doc? true
+                    :task      (print -version)}
+
+  config           {:doc       "Show config"
+                    :skip-doc? true
+                    :task      (pretty-print -config)}
+
+  outdated         {:doc  "Check for outdated dependencies"
+                    :task (clojure (with-params "-T:build outdated"))}
+
+  outdated:upgrade {:doc  "Upgrade outdated dependencies"
+                    :task (clojure (with-params "-T:build outdated:upgrade"))}
+
+  clean            {:doc  "Cleanup"
+                    :task (clojure (with-params "-T:build clean"))}
+
+  lint             {:doc  "Run linters"
+                    :task (do
+                            (shell "cljstyle check src dev/src test/src")
+                            (shell "clj-kondo --lint src dev/src test/src"))}
+
+  lint:fix         {:doc  "Run linters & fix"
+                    :task (shell "cljstyle fix src dev/src test/src")}
+
+  repl             {:doc     "Run REPL"
+                    :depends [clean]
+                    :task    (shell {:extra-env extra-env} (with-params "clojure -T:build repl"))}
+
+  test             {:doc     "Run tests"
+                    :depends [clean]
+                    :task    (shell {:extra-env extra-env} (with-params "clojure -T:build test"))}
+
+  test:unit        {:doc     "Run unit tests"
+                    :depends [clean]
+                    :task    (shell {:extra-env extra-env} (with-params "clojure -T:build test:unit"))}
+
+  test:integration {:doc     "Run integration tests"
+                    :depends [clean]
+                    :task    (shell {:extra-env extra-env} (with-params "clojure -T:build test:integration"))}
+
+  uber             {:doc     "Run build uber"
+                    :depends [clean]
+                    :task    (clojure (with-params "-T:build uber"))}}}
