@@ -1,0 +1,41 @@
+#kaocha/v1
+    {:kaocha/fail-fast?                  false
+     :kaocha/color?                      true
+     :kaocha/reporter                    [kaocha.report/documentation]
+
+     :kaocha.plugin.randomize/randomize? true
+
+     :capture-output?                    true
+
+     :plugins                            [:kaocha.plugin/capture-output
+                                          :kaocha.plugin/cloverage
+                                          :kaocha.plugin/filter
+                                          :kaocha.plugin/hooks
+                                          :kaocha.plugin/notifier
+                                          :kaocha.plugin/print-invocations
+                                          :kaocha.plugin/randomize
+                                          :kaocha.plugin.alpha/info]
+
+     :tests                              [{:id           :unit
+                                           :source-paths ["src"]
+                                           :test-paths   ["test/src"]
+                                           :focus-meta   [:unit]}
+                                          {:id           :integration
+                                           :source-paths ["src"]
+                                           :test-paths   ["test/src"]
+                                           :focus-meta   [:integration]}]
+
+     :cloverage/opts                     {:output           "coverage"
+                                          :ns-regex         []
+                                          :ns-exclude-regex []
+                                          :fail-threshold   0
+                                          :low-watermark    50
+                                          :high-watermark   80
+                                          :summary?         true
+                                          :text?            false
+                                          :emma-xml?        false
+                                          :html?            true
+                                          :nop?             false
+                                          :lcov?            false
+                                          :coveralls?       false
+                                          :codecov?         true}}
