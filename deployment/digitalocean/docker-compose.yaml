@@ -2,10 +2,7 @@ version: "3.9"
 services:
 
   backend-server:
-    image: clojure-garden-server:latest
-    build:
-      context: ../../
-      dockerfile: "./deployment/digitalocean/backend/Dockerfile"
+    image: ghcr.io/clojure-garden/backend:latest
     container_name: "clojure-garden-backend-server"
     hostname: backend-server
     ports:
@@ -18,7 +15,7 @@ services:
       DATABASE_HOST: backend-postgres
       GITHUB_OAUTH_TOKEN: ${BACKEND_GITHUB_OAUTH_TOKEN}
     networks:
-      - backendnet-1
+      - backend-net
     depends_on:
       - backend-postgres
 
@@ -35,8 +32,8 @@ services:
       POSTGRES_PASSWORD: ${BACKEND_PG_PASSWORD}
       PGDATA: /var/lib/postgresql/data
     networks:
-      - metanet-1
-      - backendnet-1
+      - metabase-net
+      - backend-net
     volumes:
       - "./${BACKEND_PG_DATA}:/var/lib/postgresql/data"
       - "./${BACKEND_PG_DUMP}:/dump"
@@ -56,7 +53,7 @@ services:
       MB_DB_PASS: ${METABASE_PG_PASSWORD}
       MB_DB_HOST: metabase-postgres
     networks:
-      - metanet-1
+      - metabase-net
     depends_on:
       - metabase-postgres
     volumes:
@@ -75,7 +72,7 @@ services:
       POSTGRES_PASSWORD: ${METABASE_PG_PASSWORD}
       PGDATA: /var/lib/postgresql/data
     networks:
-      - metanet-1
+      - metabase-net
     volumes:
       - "./${METABASE_PG_DATA}:/var/lib/postgresql/data"
 
@@ -97,15 +94,15 @@ services:
       - "backend-server"
       - "metabase"
     networks:
-      - metanet-1
-      - backendnet-1
+      - metabase-net
+      - backend-net
     volumes:
       - "./proxy/etc/ssl:/etc/nginx/ssl"
       - "./proxy/etc/service.conf:/etc/nginx/service.conf"
 
 
 networks:
-  metanet-1:
+  metabase-net:
     driver: bridge
-  backendnet-1:
+  backend-net:
     driver: bridge

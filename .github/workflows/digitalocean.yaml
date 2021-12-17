@@ -1,0 +1,57 @@
+name: Deploy to DigitalOcean
+
+on:
+  release:
+    types:
+      - published
+
+
+env:
+  registry: ghcr.io
+
+
+jobs:
+
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup babashka
+        uses: just-sultanov/setup-babashka@v2
+        with:
+          version: '0.6.8'
+
+      - name: Setup environment variables
+        run: >-
+          echo "VERSION=$(bb version)" >> $GITHUB_ENV;
+
+      - name: Check version
+        run: echo ${{ env.VERSION }}
+
+      - name: Login to docker registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.registry }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy package to digitalocean
+        uses: appleboy/ssh-action@master
+        env:
+          GITHUB_USERNAME: ${{ secrets.GITHUB_USERNAME }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          host: ${{ secrets.DIGITALOCEAN_HOSTNAME }}
+          port: ${{ secrets.DIGITALOCEAN_PORT }}
+          username: ${{ secrets.DIGITALOCEAN_USERNAME }}
+          password: ${{ secrets.DIGITALOCEAN_PASSWORD }}
+          script: |
+            cd /home/project/clojure-garden
+            git pull
+            ./scripts/setenv-digitalocean.sh
+            docker-compose -f deployment/digitalocean/docker-compose.yml down
+            docker-compose -f deployment/digitalocean/docker-compose.yml up -d
