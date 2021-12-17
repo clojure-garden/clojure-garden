@@ -55,16 +55,16 @@
                         (def -local-docker-compose-file "./deployment/local/docker-compose.yaml")
 
                         ;; Example:
-                        ;; clojure-garden/backend:latest (master branch only)
-                        ;; clojure-garden/backend:<branch>
-                        ;; clojure-garden/backend:<version>-<branch>
-                        ;; clojure-garden/backend:<version>-<branch>-<git-sha>
+                        ;; ghcr.io/clojure-garden/<image-name>:latest (master branch only)
+                        ;; ghcr.io/clojure-garden/<image-name>:<branch>
+                        ;; ghcr.io/clojure-garden/<image-name>:<version>-<branch>
+                        ;; ghcr.io/clojure-garden/<image-name>:<version>-<branch>-<git-sha>
 
                         (defn build-image-tags [image-name]
-                          (cond->> [(format "%s:%s" image-name -git-branch)
-                                    (format "%s:%s-%s" image-name -version -git-branch)
-                                    (format "%s:%s-%s-%s" image-name -version -git-branch -git-sha)]
-                            -release? (cons (format "%s:latest" image-name))))
+                          (cond->> [(format "ghcr.io/%s:%s" image-name -git-branch)
+                                    (format "ghcr.io/%s:%s-%s" image-name -version -git-branch)
+                                    (format "ghcr.io/%s:%s-%s-%s" image-name -version -git-branch -git-sha)]
+                            -release? (cons (format "ghcr.io/%s:latest" image-name))))
 
                         (defn as-tags [tags]
                           (->> tags (interpose "-t ") (str/join \space))))
