@@ -1,0 +1,141 @@
+name: CI backend
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - '.github/workflows/ci-backend.yaml'
+      - 'modules/backend/**'
+      - 'version.tmpl'
+
+
+env:
+  module_path: 'modules/backend'
+
+
+jobs:
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup babashka
+        uses: just-sultanov/setup-babashka@v2
+        with:
+          version: '0.6.8'
+
+      - name: Setup clj-kondo
+        uses: DeLaGuardo/setup-clj-kondo@master
+        with:
+          version: '2021.12.01'
+
+      - name: Setup cljstyle
+        uses: just-sultanov/setup-cljstyle@v1
+        with:
+          version: '0.15.0'
+
+      - name: Cache deps
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.gitlibs
+            ~/.clojure
+            ~/.cpcache
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/deps.edn') }}
+
+      - name: Run linters
+        working-directory: ${{ env.module_path }}
+        run: bb lint
+
+
+  test:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup environment variables
+        run: >-
+          echo 'CODECOV_TOKEN=${{ secrets.CODECOV_TOKEN }}' >> $GITHUB_ENV;
+
+      - name: Setup openjdk
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup clojure
+        uses: DeLaGuardo/setup-clojure@3.6
+        with:
+          cli: latest
+
+      - name: Setup babashka
+        uses: just-sultanov/setup-babashka@v2
+        with:
+          version: '0.6.8'
+
+      - name: Cache deps
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.gitlibs
+            ~/.clojure
+            ~/.cpcache
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/deps.edn') }}
+
+      - name: Run unit tests
+        working-directory: ${{ env.module_path }}
+        run: bb test:unit
+
+      - name: Upload coverage
+        run: bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f ./${{ env.module_path }}/coverage/codecov.json
+
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup openjdk
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup clojure
+        uses: DeLaGuardo/setup-clojure@3.6
+        with:
+          cli: latest
+
+      - name: Setup babashka
+        uses: just-sultanov/setup-babashka@v2
+        with:
+          version: '0.6.8'
+
+      - name: Cache deps
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.gitlibs
+            ~/.clojure
+            ~/.cpcache
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/deps.edn') }}
+
+      - name: Run build uber
+        working-directory: ${{ env.module_path }}
+        run: bb uber
