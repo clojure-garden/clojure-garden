@@ -1,4 +1,4 @@
-name: CD
+name: Publish docker images
 
 on:
   push:
@@ -98,7 +98,7 @@ jobs:
         run: bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f ./${{ env.backend_path }}/coverage/codecov.json
 
 
-  deploy:
+  publish:
     needs: test
     runs-on: ubuntu-latest
     steps:
