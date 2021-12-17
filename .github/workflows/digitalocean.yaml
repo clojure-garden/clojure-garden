@@ -29,7 +29,7 @@ jobs:
         run: >-
           echo "VERSION=$(bb version)" >> $GITHUB_ENV;
 
-      - name: Check version
+      - name: Show version
         run: echo ${{ env.VERSION }}
 
       - name: Login to docker registry
@@ -53,5 +53,5 @@ jobs:
             cd /home/project/clojure-garden
             git pull
             ./scripts/setenv-digitalocean.sh
-            docker-compose -f deployment/digitalocean/docker-compose.yml down
-            docker-compose -f deployment/digitalocean/docker-compose.yml up -d
+            docker-compose -f deployment/digitalocean/docker-compose.yaml down
+            docker-compose -f deployment/digitalocean/docker-compose.yaml up -d
