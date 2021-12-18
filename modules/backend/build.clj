@@ -109,7 +109,7 @@
   [opts]
   (let [opts (with-defaults opts)]
     (write-meta opts)
-    (bb/run-task opts [:test :test/b])))
+    (bb/run-task opts [:test :test/integration])))
 
 
 (defn uber
