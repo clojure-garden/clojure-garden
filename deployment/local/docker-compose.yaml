@@ -1,10 +1,10 @@
 version: "3.9"
 services:
 
-  backend-postgres:
+  backend-db:
     image: postgres:13-alpine
-    container_name: "clojure-garden-backend-postgres"
-    hostname: backend-postgres
+    container_name: "backend-db"
+    hostname: backend-db
     ports:
       - "${BACKEND_PG_PORT}:5432"
     environment:
@@ -14,14 +14,15 @@ services:
       PGDATA: /var/lib/postgresql/data
     networks:
       - metabase-net
-      - backend-net
+      - garden-net
     volumes:
       - "./${BACKEND_PG_DATA}:/var/lib/postgresql/data"
+      - "./${BACKEND_PG_DUMP}:/dump"
 
 
   metabase:
     image: metabase/metabase:v0.41.2
-    container_name: "clojure-garden-metabase"
+    container_name: "metabase"
     hostname: metabase
     ports:
       - "${METABASE_PORT}:3000"
@@ -31,19 +32,19 @@ services:
       MB_DB_PORT: 5432
       MB_DB_USER: ${METABASE_PG_USER}
       MB_DB_PASS: ${METABASE_PG_PASSWORD}
-      MB_DB_HOST: metabase-postgres
+      MB_DB_HOST: metabase-db
     networks:
       - metabase-net
     depends_on:
-      - metabase-postgres
+      - metabase-db
     volumes:
       - /dev/urandom:/dev/random:ro
 
 
-  metabase-postgres:
+  metabase-db:
     image: postgres:13-alpine
-    container_name: "clojure-garden-metabase-postgres"
-    hostname: metabase-postgres
+    container_name: "metabase-db"
+    hostname: metabase-db
     ports:
       - "${METABASE_PG_PORT}:5432"
     environment:
@@ -55,10 +56,11 @@ services:
       - metabase-net
     volumes:
       - "./${METABASE_PG_DATA}:/var/lib/postgresql/data"
+      - "./${METABASE_PG_DUMP}:/dump"
 
 
 networks:
   metabase-net:
     driver: bridge
-  backend-net:
+  garden-net:
     driver: bridge
