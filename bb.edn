@@ -2,111 +2,128 @@
  "0.6.8"
 
  :tasks
- {:requires           ([babashka.fs :as fs]
-                       [babashka.process :as process]
-                       [clojure.string :as str]
-                       [clojure.pprint :as pprint])
+ {:requires            ([babashka.fs :as fs]
+                        [babashka.process :as process]
+                        [clojure.string :as str]
+                        [clojure.pprint :as pprint])
 
-  :init               (do
-                        (defn get-env [s]
-                          (System/getenv s))
+  :init                (do
+                         (defn get-env [s]
+                           (System/getenv s))
 
-                        (defn get-property [s]
-                          (System/getProperty s))
+                         (defn get-property [s]
+                           (System/getProperty s))
 
-                        (defn pretty-print [x]
-                          (binding [pprint/*print-right-margin* 130]
-                            (pprint/pprint x)))
+                         (defn pretty-print [x]
+                           (binding [pprint/*print-right-margin* 130]
+                             (pprint/pprint x)))
 
-                        (defn execute [command]
-                          (-> command (process/tokenize) (process/process) :out slurp str/trim-newline))
+                         (defn execute [command]
+                           (-> command (process/tokenize) (process/process) :out slurp str/trim-newline))
 
-                        (def -zone-id (java.time.ZoneId/of "UTC"))
-                        (def -datetime-formatter java.time.format.DateTimeFormatter/ISO_OFFSET_DATE_TIME)
-                        (def -current-timestamp (java.time.ZonedDateTime/now -zone-id))
-                        (def -build-timestamp (str (.format -current-timestamp -datetime-formatter)))
-                        (def -build-number (execute "git rev-list HEAD --count"))
-                        (def -git-url (execute "git config --get remote.origin.url"))
-                        (def -git-branch (execute "git rev-parse --abbrev-ref HEAD"))
-                        (def -git-sha (execute "git rev-parse --short HEAD"))
+                         (def -zone-id (java.time.ZoneId/of "UTC"))
+                         (def -datetime-formatter java.time.format.DateTimeFormatter/ISO_OFFSET_DATE_TIME)
+                         (def -current-timestamp (java.time.ZonedDateTime/now -zone-id))
+                         (def -build-timestamp (str (.format -current-timestamp -datetime-formatter)))
+                         (def -build-number (execute "git rev-list HEAD --count"))
+                         (def -git-url (execute "git config --get remote.origin.url"))
+                         (def -git-branch (execute "git rev-parse --abbrev-ref HEAD"))
+                         (def -git-sha (execute "git rev-parse --short HEAD"))
 
-                        (def -release? (= "master" -git-branch))
-                        (def -snapshot? (not -release?))
-                        (def -deployable? (contains? #{"master"} -git-branch))
+                         (def -release? (= "master" -git-branch))
+                         (def -snapshot? (not -release?))
+                         (def -deployable? (contains? #{"master"} -git-branch))
 
-                        (def -version-template (execute "cat version.tmpl"))
-                        (def -version (cond-> (str/replace -version-template "{{build-number}}" -build-number)
-                                        -snapshot? (str "-SNAPSHOT")))
+                         (def -version-template (execute "cat version.tmpl"))
+                         (def -version (cond-> (str/replace -version-template "{{build-number}}" -build-number)
+                                         -snapshot? (str "-SNAPSHOT")))
 
-                        (def -config
-                          {:version         -version
-                           :build-number    -build-number
-                           :build-timestamp -build-timestamp
-                           :git-url         -git-url
-                           :git-branch      -git-branch
-                           :git-sha         -git-sha})
+                         (def -config
+                           {:version         -version
+                            :build-number    -build-number
+                            :build-timestamp -build-timestamp
+                            :git-url         -git-url
+                            :git-branch      -git-branch
+                            :git-sha         -git-sha})
 
-                        (def extra-env
-                          {})
+                         (def extra-env
+                           {})
 
-                        (def -backend-image-name "clojure-garden/backend")
-                        (def -backend-dockerfile "./deployment/images/backend/Dockerfile")
+                         (def -backend-image-name "clojure-garden/backend")
+                         (def -backend-dockerfile "./deployment/images/backend/Dockerfile")
 
-                        (def -local-docker-compose-file "./deployment/local/docker-compose.yaml")
+                         (def -frontend-image-name "clojure-garden/frontend")
+                         (def -frontend-dockerfile "./deployment/images/frontend/Dockerfile")
 
-                        ;; Example:
-                        ;; ghcr.io/clojure-garden/<image-name>:latest (master branch only)
-                        ;; ghcr.io/clojure-garden/<image-name>:<branch>
-                        ;; ghcr.io/clojure-garden/<image-name>:<version>-<branch>
-                        ;; ghcr.io/clojure-garden/<image-name>:<version>-<branch>-<git-sha>
+                         (def -local-docker-compose-file "./deployment/local/docker-compose.yaml")
 
-                        (defn build-image-tags [image-name]
-                          (cond->> [(format "ghcr.io/%s:%s" image-name -git-branch)
-                                    (format "ghcr.io/%s:%s-%s" image-name -version -git-branch)
-                                    (format "ghcr.io/%s:%s-%s-%s" image-name -version -git-branch -git-sha)]
-                            -release? (cons (format "ghcr.io/%s:latest" image-name))))
+                         ;; Example:
+                         ;; ghcr.io/clojure-garden/<image-name>:latest (master branch only)
+                         ;; ghcr.io/clojure-garden/<image-name>:<branch>
+                         ;; ghcr.io/clojure-garden/<image-name>:<version>-<branch>
+                         ;; ghcr.io/clojure-garden/<image-name>:<version>-<branch>-<git-sha>
 
-                        (defn as-tags [tags]
-                          (->> tags (interpose "-t ") (str/join \space))))
+                         (defn build-image-tags [image-name]
+                           (cond->> [(format "ghcr.io/%s:%s" image-name -git-branch)
+                                     (format "ghcr.io/%s:%s-%s" image-name -version -git-branch)
+                                     (format "ghcr.io/%s:%s-%s-%s" image-name -version -git-branch -git-sha)]
+                             -release? (cons (format "ghcr.io/%s:latest" image-name))))
 
-  :enter              (let [{:keys [doc skip-doc?]
-                             :or   {skip-doc? false}} (current-task)]
-                        (when (and doc (not skip-doc?))
-                          (println (format "▸ [clojure-garden v%s] %s" -version doc))))
+                         (defn as-tags [tags]
+                           (->> tags (interpose "-t ") (str/join \space))))
+
+  :enter               (let [{:keys [doc skip-doc?]
+                              :or   {skip-doc? false}} (current-task)]
+                         (when (and doc (not skip-doc?))
+                           (println (format "▸ [clojure-garden v%s] %s" -version doc))))
 
   ;;;;
   ;; Tasks
   ;;;;
 
-  version             {:doc       "Show version"
-                       :skip-doc? true
-                       :task      (print -version)}
+  version              {:doc       "Show version"
+                        :skip-doc? true
+                        :task      (print -version)}
 
-  config              {:doc       "Show config"
-                       :skip-doc? true
-                       :task      (pretty-print -config)}
+  config               {:doc       "Show config"
+                        :skip-doc? true
+                        :task      (pretty-print -config)}
 
-  setup               {:doc  "Setup dependencies"
-                       :task (println "not implemented")}
+  setup                {:doc  "Setup dependencies"
+                        :task (println "not implemented")}
 
-  build-image:backend {:doc  "Build backend docker image"
-                       :task (let [tags (->> -backend-image-name build-image-tags as-tags)]
-                               (shell (format "docker build -t %s -f %s ." tags -backend-dockerfile)))}
+  build-image:backend  {:doc  "Build backend docker image"
+                        :task (let [tags (->> -backend-image-name build-image-tags as-tags)]
+                                (shell (format "docker build -t %s -f %s ." tags -backend-dockerfile)))}
 
-  push-image:backend  {:doc  "Push backend docker image"
-                       :task (doseq [tag (build-image-tags -backend-image-name)]
-                               (if -deployable?
-                                 (shell (format "docker push %s" tag))
-                                 (println (format "Skip: %s" tag))))}
+  push-image:backend   {:doc  "Push backend docker image"
+                        :task (doseq [tag (build-image-tags -backend-image-name)]
+                                (if -deployable?
+                                  (shell (format "docker push %s" tag))
+                                  (println (format "Skip: %s" tag))))}
 
-  build-images        {:doc  "Build all docker images"
-                       :task (run 'build-image:backend)}
+  build-image:frontend {:doc  "Build frontend docker image"
+                        :task (let [tags (->> -frontend-image-name build-image-tags as-tags)]
+                                (shell (format "docker build -t %s -f %s ." tags -frontend-dockerfile)))}
 
-  push-images         {:doc  "Push all docker images"
-                       :task (run 'push-image:backend)}
+  push-image:frontend  {:doc  "Push frontend docker image"
+                        :task (doseq [tag (build-image-tags -frontend-image-name)]
+                                (if -deployable?
+                                  (shell (format "docker push %s" tag))
+                                  (println (format "Skip: %s" tag))))}
 
-  up                  {:doc  "Start local environment"
-                       :task (shell (format "docker compose -f %s up -d" -local-docker-compose-file))}
+  build-images         {:doc  "Build all docker images"
+                        :task (do
+                                (run 'build-image:backend)
+                                (run 'build-image:frontend))}
 
-  down                {:doc  "Shutdown local environment"
-                       :task (shell (format "docker compose -f %s down" -local-docker-compose-file))}}}
+  push-images          {:doc  "Push all docker images"
+                        :task (do
+                                (run 'push-image:backend)
+                                (run 'push-image:frontend))}
+
+  up                   {:doc  "Start local environment"
+                        :task (shell (format "docker compose -f %s up -d" -local-docker-compose-file))}
+
+  down                 {:doc  "Shutdown local environment"
+                        :task (shell (format "docker compose -f %s down" -local-docker-compose-file))}}}

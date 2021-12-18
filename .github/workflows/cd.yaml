@@ -9,6 +9,7 @@ on:
 env:
   registry: ghcr.io
   backend_path: 'modules/backend'
+  frontend_path: 'modules/frontend'
 
 
 jobs:
@@ -36,20 +37,12 @@ jobs:
         with:
           version: '0.15.0'
 
-      - name: Cache deps
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.m2/repository
-            ~/.gitlibs
-            ~/.clojure
-            ~/.cpcache
-          key: ${{ runner.os }}-deps-${{ hashFiles('**/deps.edn') }}
-          restore-keys: |
-            ${{ runner.os }}-deps-
-
       - name: '[backend] Run linters'
         working-directory: ${{ env.backend_path }}
+        run: bb lint
+
+      - name: '[frontend] Run linters'
+        working-directory: ${{ env.frontend_path }}
         run: bb lint
 
 
@@ -72,6 +65,13 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Setup nodejs
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+
       - name: Setup clojure
         uses: DeLaGuardo/setup-clojure@3.6
         with:
@@ -91,8 +91,6 @@ jobs:
             ~/.clojure
             ~/.cpcache
           key: ${{ runner.os }}-deps-${{ hashFiles('**/deps.edn') }}
-          restore-keys: |
-            ${{ runner.os }}-deps-
 
       - name: '[backend] Run unit tests'
         working-directory: ${{ env.backend_path }}
@@ -101,6 +99,14 @@ jobs:
       - name: '[backend] Upload coverage'
         run: |
           bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -F backend -f ./${{ env.backend_path }}/coverage/codecov.json
+
+      - name: '[frontend] Setup dependencies'
+        working-directory: ${{ env.frontend_path }}
+        run: bb setup
+
+      - name: '[frontend] Run tests'
+        working-directory: ${{ env.frontend_path }}
+        run: bb test
 
 
   publish:
@@ -112,33 +118,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup openjdk
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Setup clojure
-        uses: DeLaGuardo/setup-clojure@3.6
-        with:
-          cli: latest
-
       - name: Setup babashka
         uses: just-sultanov/setup-babashka@v2
         with:
           version: '0.6.8'
-
-      - name: Cache deps
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.m2/repository
-            ~/.gitlibs
-            ~/.clojure
-            ~/.cpcache
-          key: ${{ runner.os }}-deps-${{ hashFiles('**/deps.edn') }}
-          restore-keys: |
-            ${{ runner.os }}-deps-
 
       - name: Login to docker registry
         uses: docker/login-action@v1
