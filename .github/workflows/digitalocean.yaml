@@ -52,6 +52,6 @@ jobs:
           script: |
             cd /home/project/clojure-garden
             git pull
-            ./scripts/setenv-digitalocean.sh
+            source deployment/digitalocean/.env
             docker-compose -f deployment/digitalocean/docker-compose.yaml down
             docker-compose -f deployment/digitalocean/docker-compose.yaml up -d
