@@ -3,6 +3,7 @@
 .idea
 coverage
 deployment/digitalocean/data
+deployment/digitalocean/proxy/etc/ssl
 deployment/local/data
 node_modules
 target
