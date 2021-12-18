@@ -45,6 +45,8 @@ jobs:
             ~/.clojure
             ~/.cpcache
           key: ${{ runner.os }}-deps-${{ hashFiles('**/deps.edn') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-
 
       - name: '[backend] Run linters'
         working-directory: ${{ env.backend_path }}
@@ -89,6 +91,8 @@ jobs:
             ~/.clojure
             ~/.cpcache
           key: ${{ runner.os }}-deps-${{ hashFiles('**/deps.edn') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-
 
       - name: '[backend] Run unit tests'
         working-directory: ${{ env.backend_path }}
@@ -133,6 +137,8 @@ jobs:
             ~/.clojure
             ~/.cpcache
           key: ${{ runner.os }}-deps-${{ hashFiles('**/deps.edn') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-
 
       - name: Login to docker registry
         uses: docker/login-action@v1
