@@ -1,10 +1,14 @@
 .clj-kondo/.cache
 .cpcache
+.shadow-cljs
 .idea
 coverage
 deployment/digitalocean/data
 deployment/digitalocean/proxy/etc/ssl
 deployment/local/data
+modules/frontend/public/test
+modules/frontend/public/assets
+dist
 node_modules
 target
 .env
