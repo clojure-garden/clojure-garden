@@ -98,7 +98,7 @@ jobs:
         run: bb test:unit
 
       - name: Upload coverage
-        run: bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -f ./${{ env.module_path }}/coverage/codecov.json
+        run: bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -F backend -f ./${{ env.module_path }}/coverage/codecov.json
 
 
   build:
