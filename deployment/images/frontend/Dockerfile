@@ -26,5 +26,5 @@ FROM nginx:1.21.4-alpine AS runner
 
 WORKDIR /usr/share/nginx/html
 COPY --from=builder /project/modules/frontend/dist .
+
 EXPOSE 80
-EXPOSE 443
