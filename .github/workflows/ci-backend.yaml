@@ -39,18 +39,6 @@ jobs:
         with:
           version: '0.15.0'
 
-      - name: Cache deps
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.m2/repository
-            ~/.gitlibs
-            ~/.clojure
-            ~/.cpcache
-          key: ${{ runner.os }}-deps-${{ hashFiles('**/deps.edn') }}
-          restore-keys: |
-            ${{ runner.os }}-deps-
-
       - name: Run linters
         working-directory: ${{ env.module_path }}
         run: bb lint
@@ -94,8 +82,6 @@ jobs:
             ~/.clojure
             ~/.cpcache
           key: ${{ runner.os }}-deps-${{ hashFiles('**/deps.edn') }}
-          restore-keys: |
-            ${{ runner.os }}-deps-
 
       - name: Run unit tests
         working-directory: ${{ env.module_path }}
@@ -139,8 +125,6 @@ jobs:
             ~/.clojure
             ~/.cpcache
           key: ${{ runner.os }}-deps-${{ hashFiles('**/deps.edn') }}
-          restore-keys: |
-            ${{ runner.os }}-deps-
 
       - name: Run build uber
         working-directory: ${{ env.module_path }}
