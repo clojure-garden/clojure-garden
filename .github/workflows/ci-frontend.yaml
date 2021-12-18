@@ -1,0 +1,150 @@
+name: Frontend module CI
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - '.github/workflows/ci-frontend.yaml'
+      - 'modules/frontend/**'
+      - 'version.tmpl'
+
+
+env:
+  module_path: 'modules/frontend'
+
+
+jobs:
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup babashka
+        uses: just-sultanov/setup-babashka@v2
+        with:
+          version: '0.6.8'
+
+      - name: Setup clj-kondo
+        uses: DeLaGuardo/setup-clj-kondo@master
+        with:
+          version: '2021.12.16'
+
+      - name: Setup cljstyle
+        uses: just-sultanov/setup-cljstyle@v1
+        with:
+          version: '0.15.0'
+
+      - name: Run linters
+        working-directory: ${{ env.module_path }}
+        run: bb lint
+
+
+  test:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup openjdk
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup nodejs
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+
+      - name: Setup clojure
+        uses: DeLaGuardo/setup-clojure@3.6
+        with:
+          cli: latest
+
+      - name: Setup babashka
+        uses: just-sultanov/setup-babashka@v2
+        with:
+          version: '0.6.8'
+
+      - name: Cache deps
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.gitlibs
+            ~/.clojure
+            ~/.cpcache
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/deps.edn') }}
+
+      - name: Setup dependencies
+        working-directory: ${{ env.module_path }}
+        run: bb setup
+
+      - name: Run tests
+        working-directory: ${{ env.module_path }}
+        run: bb test
+
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup openjdk
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup nodejs
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+
+      - name: Setup clojure
+        uses: DeLaGuardo/setup-clojure@3.6
+        with:
+          cli: latest
+
+      - name: Setup babashka
+        uses: just-sultanov/setup-babashka@v2
+        with:
+          version: '0.6.8'
+
+      - name: Cache deps
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.gitlibs
+            ~/.clojure
+            ~/.cpcache
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/deps.edn') }}
+
+      - name: Setup dependencies
+        working-directory: ${{ env.module_path }}
+        run: bb setup
+
+      - name: Run build
+        working-directory: ${{ env.module_path }}
+        run: bb build
+
+      - name: Make dist
+        working-directory: ${{ env.module_path }}
+        run: bb dist
