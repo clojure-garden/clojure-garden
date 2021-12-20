@@ -102,9 +102,12 @@ We want to fast-track the Clojure onboarding process and make it enjoyable and s
 ## Quickstart
 
 ### System architecture
-![System context](https://github.com/clojure-garden/clojure-garden/blob/master/diagrams/system/clojure-garden-system-context.drawio.png?raw=true)
 
-![System container](https://github.com/clojure-garden/clojure-garden/blob/master/diagrams/system/clojure-garden-system-container.drawio.png?raw=true)
+<img alt="System context" src="diagrams/system/clojure-garden-system-context.drawio.png" title="System context"/>
+<p align="center"><strong><em>clojure.garden context</em></strong></p>  
+
+<img alt="System container" src="diagrams/system/clojure-garden-system-container.drawio.png" title="System container"/>
+<p align="center"><strong><em>clojure.garden container</em></strong></p>
 
 ### Dependencies
 
@@ -171,7 +174,7 @@ We want to fast-track the Clojure onboarding process and make it enjoyable and s
 
 ### Contributing
 
-Please see the [contributing guide](https://github.com/clojure-garden/clojure-garden/blob/master/CONTRIBUTING.md).
+Please see the [contributing guide](CONTRIBUTING.md).
 
 
 ## Clojure Garden Fellowship
