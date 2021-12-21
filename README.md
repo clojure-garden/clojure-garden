@@ -111,66 +111,37 @@ We want to fast-track the Clojure onboarding process and make it enjoyable and s
 
 ### Dependencies
 
-**\[Core\]**  
-- org.clojure/clojure  
-- org.clojure/core.async  
+<img alt="System context" src="diagrams/system/clojure-garden-deps-mindmap.png" title="clojure.garden dependencies"/>
+<p align="center"><strong><em>clojure.garden dependencies</em></strong></p>  
 
-**\[System building\]**  
-- integrant  
-- aero  
+### Deployment
 
-**\[Formatter\]**  
-- camel-snake-kebab  
-- clj-commons/clj-yaml  
-
-**\[Time\]**  
-- clojure.java-time  
-
-**\[Logging\]**  
-- org.slf4j/slf4j-log4j12  
-- org.slf4j/slf4j-api  
-- org.clojure/tools.logging  
-
-**\[Web server\]**  
-- ring/ring-core  
-- ring/ring-jetty-adapter  
-- metosin/reitit  
-
-**\[GraphQL client\]**  
-- floatingpointio/graphql-builder  
-- re-graph  
-
-**\[JSON/HTTP client\]**  
-- cheshire  
-- hato  
-
-**\[Database\]**  
-- org.postgresql/postgresql  
-- hikari-cp  
-- com.github.seancorfield/next.jdbc  
-- com.github.seancorfield/honeysql  
-
-**\[Database migrations\]**  
-- migratus  
+<img alt="System context" src="diagrams/deployment/cicd-mindmap.png" title="Repository CI/CD"/>
+<p align="center"><strong><em>Repository CI/CD</em></strong></p> 
 
 ### Roadmap
 
 - [x] Bootstrap the project & the backend module
-- [x] Configure local deployment
-- [x] Create a GitHub API client to collect starts, number of contributors,  
+- [x] **\[devops\]** Configure local deployment
+- [x] **\[backend\]** Create a GitHub API client to collect starts, number of contributors,  
       issues, releases, etc.
-- [x] Create a Clojars API client to collect the artifacts data
-- [x] Create the ER diagram for the backend database
-- [x] Write database migrations
-- [x] Create a feed crawler for Clojars
-- [x] Setup Metabase
+- [x] **\[backend\]** Create a Clojars API client to collect the artifacts data
+- [x] **\[backend\]** Create the ER diagram for the backend database
+- [x] **\[backend\]** Write database migrations
+- [x] **\[backend\]** Create a feed crawler for Clojars
+- [x] **\[devops\]** Setup Metabase
 - [x] Create basic charts in Metabase
-- [x] Migrate to deps.edn
+- [x] **\[backend\]** Migrate to deps.edn
 - [x] Write a good README
-- [x] Configure GitHub actions
-- [x] Bootstrap the project frontend module
-- [ ] Create custom library grouping by tags \[frontend\]
-
+- [x] **\[devops\]** Configure GitHub actions
+- [x] **\[frontend\]** Bootstrap the project frontend module
+- [ ] **\[backend\]** **\[frontend\]** Create custom library grouping by tags
+- [ ] **\[frontend\]** Create basic charts and tables
+- [ ] **\[backend\]** Create a Slack API client to collect Clojure library mention context
+- [ ] **\[backend\]** Create a Twitter API client to collect Clojure library mention context
+- [ ] **\[frontend\]** **\[backend\]** Implement library search
+- [ ] **\[backend\]** **\[frontend\]** Implement of custom library ratings
+- [ ] **\[backend\]** **\[frontend\]** implement a personal account with the ability to create your own charts and subscriptions
 
 ### Contributing
 
@@ -184,7 +155,7 @@ Are you using clojure.garden in your company or personal projects? Let us know [
 
 ## Talk
 
-An overview of Сlojure Garden concepts on **re:Clojure 2021** presentation:
+An overview of Сlojure Garden concepts on [re:Clojure 2021](https://www.reclojure.org/) presentation:
 
 https://youtu.be/bzSJ0EKLUZg
 
