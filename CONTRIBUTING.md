@@ -23,7 +23,9 @@ You should also have the `core.hooksPath` git config set up (see above), as the 
 
 ### Development
 * To start development, create a `deployment/local/.env` file 
-  from the `deployment/local/.env.template` template.
+  from the `deployment/local/.env.template` template and **set environment variables** from it.
+
+
 * From the project root:
   ```sh
   # start local environment
@@ -32,8 +34,11 @@ You should also have the `core.hooksPath` git config set up (see above), as the 
   # shutdown local environment
   $ bb down
   ```
+  
+* To develop in REPL, test and build, **switch to the desired module directory**: `modules/backend` or `modules/frontend`.  
 
-  To develop in REPL, test and build, switch to the desired module directory (`modules/backend` or `modules/frontend`):
+
+* From the module root:
   ```sh
   # run backend repl
   $ bb repl
@@ -44,14 +49,14 @@ You should also have the `core.hooksPath` git config set up (see above), as the 
   # upgrade outdated dependencies
   $ bb outdated:upgrade
   ```
-* In the backend REPL, run the following commands:
+* In the **backend REPL**, run the following commands:
   * Run `dev` to load the development namespace:
     ```clojure
     user=> (dev)
     #object[clojure.lang.Namespace ... "dev"]
     ```
-  * In the `dev` namespace, run `go` to prep and initiate the system.
-    This creates a web server at <http://localhost:8080>:
+  * In the `dev` namespace, run `go` to prep and initiate the system (**requires a deployed local environment**). 
+  * This creates a web server at <http://localhost:8080>:
     ```clojure
     user=> (go)
     :initiated
@@ -63,35 +68,44 @@ You should also have the `core.hooksPath` git config set up (see above), as the 
     :reloading (...)
     :resumed
     ```
-
+  
 ### Testing
-```sh
-# run linters
-$ bb lint
 
-# run linters and fix issues
-$ bb lint:fix
+* Integration tests require a deployed environment before run (`bb up` from the root of the project).
+  
 
-# run only unit tests
-$ bb test:unit
+* From the module root:
+  ```sh
+   # run linters
+   $ bb lint
 
-# run only integration tests (requires a running tarantool)
-$ bb test:integration
+   # run linters and fix issues
+   $ bb lint:fix
 
-# run all tests
-$ bb test
- ```
+   # run only unit tests
+   $ bb test:unit
+
+   # run only integration tests
+   $ bb test:integration
+
+   # run all tests
+   $ bb test
+  ```
 
 ### Building backend
-```sh
-# run cleanup
-$ bb clean
 
-# run uberjar
-$ bb uber
-```
+* From the module root:
+  ```sh
+  # run cleanup
+  $ bb clean
+
+  # run uberjar
+  $ bb uber
+  ```
   
 ### Other tasks
-```sh
-$ bb tasks
-```
+
+* From the module/project root:
+  ```sh
+  $ bb tasks
+  ```
