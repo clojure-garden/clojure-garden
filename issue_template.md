@@ -15,7 +15,7 @@ Description of the correct behavior here.
 
 **Branch(es):**
 
-develop, master, etc.
+master, feature, etc.
 
 **hash/commit:**
 
