@@ -1,4 +1,11 @@
 ## Clojure Garden
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)  
+[![Backend CI](https://github.com/clojure-garden/clojure-garden/actions/workflows/ci-backend.yaml/badge.svg)](https://github.com/clojure-garden/clojure-garden/actions/workflows/ci-backend.yaml)
+[![Backend codecov](https://codecov.io/gh/clojure-garden/clojure-garden/branch/master/graph/badge.svg?token=TS0K0R8M1V&flag=backend)](https://codecov.io/gh/clojure-garden/clojure-garden)  
+[![Frontend CI](https://github.com/clojure-garden/clojure-garden/actions/workflows/ci-frontend.yaml/badge.svg)](https://github.com/clojure-garden/clojure-garden/actions/workflows/ci-frontend.yaml)
+[![Backend codecov](https://codecov.io/gh/clojure-garden/clojure-garden/branch/master/graph/badge.svg?token=TS0K0R8M1V&flag=frontend)](https://codecov.io/gh/clojure-garden/clojure-garden)
+
 The [navigator](https://clojure.garden) in the Clojure ecosystem: start quickly with the Clojure development
 
 \#clojure \#clojurescript
@@ -159,7 +166,7 @@ An overview of Сlojure Garden concepts on [re:Clojure 2021](https://www.recloju
 
 https://youtu.be/bzSJ0EKLUZg
 
-## Core team:
+## Core team
 
 [Artem Barmin](https://github.com/artem-barmin-dev)  
 [Ilshat Sultanov](https://github.com/just-sultanov)  
@@ -167,3 +174,8 @@ https://youtu.be/bzSJ0EKLUZg
 [Gleb Yeliseev](https://github.com/devleifr)  
 [Inna Kovalenko](https://github.com/innakovalenko)
 
+## Copyright & License
+
+The MIT License (MIT)
+
+Copyright © 2021 Freshcode LTD
