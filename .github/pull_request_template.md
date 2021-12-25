@@ -15,6 +15,6 @@ Closes # (insert issue tracker number)
 
 **Code of Conduct**
 
-By submitting this issue, you agree to follow our [Code of Conduct](../../CODE_OF_CONDUCT.md)
+By submitting this issue, you agree to follow our [Code of Conduct](../CODE_OF_CONDUCT.md)
 
 - [ ] I agree to follow this project's Code of Conduct
