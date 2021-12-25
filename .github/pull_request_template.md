@@ -1,19 +1,19 @@
-**Changes proposed:**
+## Changes proposed:
 
 -  
 -  
 -  
 
-**Issues addressed:**
+## Issues addressed:
 
 Closes # (insert issue tracker number)
 
-**Known issues and TODO list:** (add/remove lines as needed)
+## Known issues and TODO list: (add/remove lines as needed)
 
 - [ ] 
 - [ ] 
 
-**Code of Conduct**
+## Code of Conduct
 
 By submitting this issue, you agree to follow our [Code of Conduct](../CODE_OF_CONDUCT.md)
 
