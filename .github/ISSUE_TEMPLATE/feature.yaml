@@ -1,6 +1,6 @@
 name: New issue for Feature Suggestion
 description: Request our thoughts on your suggestion for a new feature.
-labels: [features]
+labels: [enhancement]
 body:
   - type: textarea
     attributes:
