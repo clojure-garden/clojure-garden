@@ -27,7 +27,8 @@
                               :extra-deps  {nrepl/nrepl    {:mvn/version "0.9.0"}
                                             hashp/hashp    {:mvn/version "0.2.1"}
                                             integrant/repl {:mvn/version "0.3.2"}}
-                              :main-opts   ["--main" "nrepl.cmdline"]}
+                              ;; IP binding (0.0.0.0) is required for development in WSL 2
+                              :main-opts   ["--main" "nrepl.cmdline" "--bind" "0.0.0.0"]}
 
            :test             {:extra-paths ["test/src" "test/resources"]
                               :extra-deps  {lambdaisland/kaocha           {:mvn/version "1.60.972"}
