@@ -1,6 +1,7 @@
 ## Clojure Garden
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)  
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Release](https://img.shields.io/github/v/release/clojure-garden/clojure-garden.svg)](https://github.com/clojure-garden/clojure-garden/releases)  
 [![Backend CI](https://github.com/clojure-garden/clojure-garden/actions/workflows/ci-backend.yml/badge.svg)](https://github.com/clojure-garden/clojure-garden/actions/workflows/ci-backend.yml)
 [![Backend codecov](https://codecov.io/gh/clojure-garden/clojure-garden/branch/master/graph/badge.svg?token=TS0K0R8M1V&flag=backend)](https://codecov.io/gh/clojure-garden/clojure-garden)  
 [![Frontend CI](https://github.com/clojure-garden/clojure-garden/actions/workflows/ci-frontend.yml/badge.svg)](https://github.com/clojure-garden/clojure-garden/actions/workflows/ci-frontend.yml)
