@@ -55,7 +55,7 @@
                          (def -frontend-image-name "clojure-garden/frontend")
                          (def -frontend-dockerfile "./deployment/images/frontend/Dockerfile")
 
-                         (def -local-docker-compose-file "./deployment/local/docker-compose.yaml")
+                         (def -local-docker-compose-file "./deployment/local/docker-compose.yml")
 
                          ;; Example:
                          ;; ghcr.io/clojure-garden/<image-name>:latest (master branch only)

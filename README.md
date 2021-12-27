@@ -1,9 +1,9 @@
 ## Clojure Garden
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)  
-[![Backend CI](https://github.com/clojure-garden/clojure-garden/actions/workflows/ci-backend.yaml/badge.svg)](https://github.com/clojure-garden/clojure-garden/actions/workflows/ci-backend.yaml)
+[![Backend CI](https://github.com/clojure-garden/clojure-garden/actions/workflows/ci-backend.yml/badge.svg)](https://github.com/clojure-garden/clojure-garden/actions/workflows/ci-backend.yml)
 [![Backend codecov](https://codecov.io/gh/clojure-garden/clojure-garden/branch/master/graph/badge.svg?token=TS0K0R8M1V&flag=backend)](https://codecov.io/gh/clojure-garden/clojure-garden)  
-[![Frontend CI](https://github.com/clojure-garden/clojure-garden/actions/workflows/ci-frontend.yaml/badge.svg)](https://github.com/clojure-garden/clojure-garden/actions/workflows/ci-frontend.yaml)
+[![Frontend CI](https://github.com/clojure-garden/clojure-garden/actions/workflows/ci-frontend.yml/badge.svg)](https://github.com/clojure-garden/clojure-garden/actions/workflows/ci-frontend.yml)
 [![Backend codecov](https://codecov.io/gh/clojure-garden/clojure-garden/branch/master/graph/badge.svg?token=TS0K0R8M1V&flag=frontend)](https://codecov.io/gh/clojure-garden/clojure-garden)
 
 The [navigator](https://clojure.garden) in the Clojure ecosystem: start quickly with the Clojure development
