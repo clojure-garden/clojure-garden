@@ -53,5 +53,5 @@ jobs:
             cd /home/project/clojure-garden
             git pull
             source deployment/digitalocean/.env
-            docker-compose -f deployment/digitalocean/docker-compose.yaml down
-            docker-compose -f deployment/digitalocean/docker-compose.yaml up -d
+            docker-compose -f deployment/digitalocean/docker-compose.yml down
+            docker-compose -f deployment/digitalocean/docker-compose.yml up -d

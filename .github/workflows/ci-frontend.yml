@@ -1,17 +1,17 @@
-name: Backend module CI
+name: Frontend module CI
 
 on:
   pull_request:
     branches:
       - master
     paths:
-      - '.github/workflows/ci-backend.yaml'
-      - 'modules/backend/**'
+      - '.github/workflows/ci-frontend.yml'
+      - 'modules/frontend/**'
       - 'version.tmpl'
 
 
 env:
-  module_path: 'modules/backend'
+  module_path: 'modules/frontend'
 
 
 jobs:
@@ -53,15 +53,18 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup environment variables
-        run: >-
-          echo 'CODECOV_TOKEN=${{ secrets.CODECOV_TOKEN }}' >> $GITHUB_ENV;
-
       - name: Setup openjdk
         uses: actions/setup-java@v2
         with:
           distribution: 'temurin'
           java-version: '17'
+
+      - name: Setup nodejs
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
 
       - name: Setup clojure
         uses: DeLaGuardo/setup-clojure@3.6
@@ -83,12 +86,13 @@ jobs:
             ~/.cpcache
           key: ${{ runner.os }}-deps-${{ hashFiles('**/deps.edn') }}
 
-      - name: Run unit tests
+      - name: Setup dependencies
         working-directory: ${{ env.module_path }}
-        run: bb test:unit
+        run: bb setup
 
-      - name: Upload coverage
-        run: bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -F backend -f ./${{ env.module_path }}/coverage/codecov.json
+      - name: Run tests
+        working-directory: ${{ env.module_path }}
+        run: bb test
 
 
   build:
@@ -106,6 +110,13 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Setup nodejs
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+
       - name: Setup clojure
         uses: DeLaGuardo/setup-clojure@3.6
         with:
@@ -126,6 +137,14 @@ jobs:
             ~/.cpcache
           key: ${{ runner.os }}-deps-${{ hashFiles('**/deps.edn') }}
 
-      - name: Run build uber
+      - name: Setup dependencies
         working-directory: ${{ env.module_path }}
-        run: bb uber
+        run: bb setup
+
+      - name: Run build
+        working-directory: ${{ env.module_path }}
+        run: bb build
+
+      - name: Make dist
+        working-directory: ${{ env.module_path }}
+        run: bb dist
