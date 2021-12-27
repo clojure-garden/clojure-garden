@@ -1,10 +1,7 @@
 blank_issues_enabled: false
 
 contact_links:
-  - name: Get help in the Slack channel
+  - name: Get help in our Slack Channel
     url: https://clojurians.slack.com/messages/clojure-garden
     about: Do you have a question? The fastest way to get help is on Clojure Garden's Slack channel!
-  - name: New issue on clojure.garden
-    url: https://github.com/clojure-garden/clojure-garden/issues/new/choose
-    about: Having a problem or enhancement suggestions? Create an issue using the appropriate template.
 
