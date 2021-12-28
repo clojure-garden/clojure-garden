@@ -19,3 +19,11 @@
 ;;
 
 (goog-define logger-level "off")
+
+
+
+;;
+;; i18n config
+;;
+
+(goog-define default-language "en")
