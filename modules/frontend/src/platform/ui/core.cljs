@@ -1,37 +1,38 @@
 (ns platform.ui.core
   (:require
+    [antd.core :as ant]
     [goog.dom :as gdom]
     [platform.ui.db :as db]
+    [platform.ui.deps]
     [platform.ui.logger :as logger]
+    [platform.ui.pages.root :as root]
+    [platform.ui.router.core :as router]
     [re-frame.core :as rf]
     [reagent.dom :as dom]))
 
 
-(defn square
-  [x]
-  (* x x))
-
-
 (defn setup-tools
   "Setup tools."
-  {:added "0.0.1"}
   []
   (logger/init!))
 
 
 (defn app
-  "App component."
   []
-  [:h1 "Hello world!"])
+  (when-some [locale @(rf/subscribe [:i18n/locale])]
+    [ant/config-provider {:locale        (:antd locale)
+                          :componentSize "large"}
+     [root/page]]))
 
 
 (defn mount-root
   "Mount root component."
   {:dev/after-load true}
   []
-  (when-let [root (gdom/getElement "root")]
+  (when-some [root-elem (gdom/getElement "root")]
     (rf/clear-subscription-cache!)
-    (dom/render [app] root)))
+    (router/init!)
+    (dom/render [app] root-elem)))
 
 
 (defn init!
