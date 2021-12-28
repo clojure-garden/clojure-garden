@@ -1,30 +1,33 @@
-{:output  {:exclude-files []}
+{:output        {:exclude-files
+                 ["src/antd/core.cljs"
+                  "src/antd/icons.cljs"]}
 
- :config-paths ["com.github.seancorfield/next.jdbc"]
+ :config-paths  ["com.github.seancorfield/next.jdbc"]
 
- :lint-as {graphql-builder.parser/defgraphql clojure.core/def}
+ :lint-as       {graphql-builder.parser/defgraphql clojure.core/def
+                 day8.re-frame.tracing/fn-traced   clojure.core/fn}
 
- :linters {:consistent-alias
-           {:aliases {clojure.pprint     pprint
-                      clojure.set        set
-                      clojure.string     str
-                      next.jdbc          jdbc}}
+ :linters       {:consistent-alias
+                 {:aliases {clojure.pprint pprint
+                            clojure.set    set
+                            clojure.string str
+                            next.jdbc      jdbc}}
 
-           :unresolved-namespace
-           {:exclude [user criterium.core]}
+                 :unresolved-namespace
+                 {:exclude [user criterium.core]}
 
-           :unresolved-symbol
-           {:exclude [(cljs.test/are [thrown? thrown-with-msg?])
-                      (cljs.test/is [thrown? thrown-with-msg?])
-                      (clojure.test/are [thrown? thrown-with-msg?])
-                      (clojure.test/is [thrown? thrown-with-msg?])]}
+                 :unresolved-symbol
+                 {:exclude [(cljs.test/are [thrown? thrown-with-msg?])
+                            (cljs.test/is [thrown? thrown-with-msg?])
+                            (clojure.test/are [thrown? thrown-with-msg?])
+                            (clojure.test/is [thrown? thrown-with-msg?])]}
 
-           :unsorted-required-namespaces
-           {:level :warning}
+                 :unsorted-required-namespaces
+                 {:level :warning}
 
-           :unused-referred-var
-           {:exclude {cljs.test    [deftest is testing use-fixtures]
-                      clojure.test [deftest is testing use-fixtures]}}}
+                 :unused-referred-var
+                 {:exclude {cljs.test    [deftest is testing use-fixtures]
+                            clojure.test [deftest is testing use-fixtures]}}}
 
  :skip-comments true
- :hooks   {}}
+ :hooks         {}}
