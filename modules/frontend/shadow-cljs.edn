@@ -3,25 +3,30 @@
  :nrepl          {:init-ns user}
 
  :build-defaults {:closure-defines
-                  {goog.DEBUG                         true
-                   platform.ui.config/version         #shadow/env "VERSION"
-                   platform.ui.config/build-number    #shadow/env "BUILD_NUMBER"
-                   platform.ui.config/build-timestamp #shadow/env "BUILD_TIMESTAMP"
-                   platform.ui.config/git-url         #shadow/env "GIT_URL"
-                   platform.ui.config/git-branch      #shadow/env "GIT_BRANCH"
-                   platform.ui.config/git-sha         #shadow/env "GIT_SHA"
-                   platform.ui.config/logger-level    "error"}}
+                  {goog.DEBUG                          true
+                   platform.ui.config/version          #shadow/env "VERSION"
+                   platform.ui.config/build-number     #shadow/env "BUILD_NUMBER"
+                   platform.ui.config/build-timestamp  #shadow/env "BUILD_TIMESTAMP"
+                   platform.ui.config/git-url          #shadow/env "GIT_URL"
+                   platform.ui.config/git-branch       #shadow/env "GIT_BRANCH"
+                   platform.ui.config/git-sha          #shadow/env "GIT_SHA"
+                   platform.ui.config/logger-level     "error"
+                   platform.ui.config/default-language "en"}
+
+                  :compiler-options
+                  {:output-feature-set :es2018}}
 
  :builds         {:app  {:target     :browser
                          :output-dir "public/assets"
                          :asset-path "/assets"
 
-                         :modules    {:bundle {:init-fn platform.ui.core/init!}}
+                         :modules    {:main {:init-fn platform.ui.core/init!}}
 
                          :devtools   {:http-port 3000
                                       :http-root "public"
                                       :preloads  [devtools.preload
                                                   hashp.core
+                                                  sci.core
                                                   day8.re-frame-10x.preload]}
 
                          :dev        {:compiler-options {:closure-defines {re-frame.trace/trace-enabled?        true
