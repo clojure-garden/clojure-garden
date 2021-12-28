@@ -1,0 +1,195 @@
+@import "~antd/lib/style/themes/default.less";
+@import "~antd/dist/antd.less";
+
+@font-face {
+  font-family: "Julius Sans One";
+  font-style: normal;
+  font-weight: 400;
+  src: url("fonts/JuliusSansOneLatinExt.woff2") format("woff2");
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Julius Sans One";
+  font-style: normal;
+  font-weight: 400;
+  src: url("fonts/JuliusSansOneLatin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122,
+    U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@brand-font-family: "Julius Sans One", @font-family;
+
+@background-color: #fafafa;
+@border-radius-base: 5px;
+
+@layout-header-background: @background-color;
+@layout-header-height: 72px;
+
+@layout-body-background: @background-color;
+@layout-sider-background: @background-color;
+
+@box-shadow-base: 0 1px 2px -2px rgba(0, 0, 0, 0.16), 0 2px 4px 0 rgba(0, 0, 0, 0.12), 0 3px 12px 4px rgba(0, 0, 0, 0.09);
+
+/*
+ * Overrides
+ */
+
+.ant-menu-horizontal {
+  border-bottom: 0;
+}
+
+ul.ant-menu.ant-menu-root.ant-menu-vertical.ant-menu-light {
+  border-radius: @border-radius-base;
+  margin-top: 16px;
+  min-width: 150px;
+}
+
+/*
+ * Page
+ */
+
+.page {
+  display: flex;
+  min-height: 100vh;
+  z-index: 0;
+
+  .page-header {
+    box-shadow: @box-shadow-base;
+    position: fixed;
+    width: 100%;
+    z-index: 1;
+
+    .header-menu {
+      display: flex;
+      gap: 1rem;
+
+      .logotype {
+        a {
+          align-items: center;
+          color: @text-color;
+          display: flex;
+          gap: 5px;
+          justify-content: center;
+
+          .logotype-image {
+            background: url("images/plant.svg") no-repeat;
+            height: 40px;
+            width: 40px;
+          }
+
+          .logotype-text {
+            font-family: @brand-font-family;
+            font-size: 1.2rem;
+          }
+        }
+      }
+
+      .nav {
+        background-color: @background-color;
+        flex: 1;
+
+        .nav-links {
+          background-color: @background-color;
+          font-family: @brand-font-family;
+        }
+      }
+
+      .user {
+        .user-menu {
+        }
+
+        .avatar {
+          background-color: @green-base;
+          color: @green-1;
+          font-size: 20px;
+          height: 40px;
+          line-height: 40px;
+          width: 40px;
+        }
+      }
+    }
+  }
+
+  .page-content {
+    margin-top: @layout-header-height;
+  }
+
+  .page-footer {
+    z-index: 0;
+
+    .copyright {
+      display: flex;
+      justify-content: flex-end;
+      font-family: @brand-font-family;
+    }
+  }
+}
+
+/*
+ * Loading page
+ */
+
+.loading-page {
+  .page-content {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+  }
+}
+
+/*
+ * Landing page
+ */
+
+.landing-page {
+  background-color: transparent;
+
+  .page-content {
+    .video {
+      height: 100%;
+      overflow: hidden;
+      position: absolute;
+      width: 100%;
+
+      .text {
+        color: @background-color;
+        font-family: @brand-font-family;
+        height: auto;
+        left: 50%;
+        position: absolute;
+        text-shadow: @box-shadow-base;
+        top: 40%;
+        transform: translate(-50%, -50%);
+        width: auto;
+      }
+
+      video {
+        height: auto;
+        left: 50%;
+        min-height: 100%;
+        min-width: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 40%;
+        transform: translate(-50%, -50%);
+        width: auto;
+        z-index: -1;
+      }
+    }
+  }
+
+  .page-footer {
+    background-color: transparent;
+    color: @background-color;
+
+    a {
+      color: @blue-7;
+    }
+  }
+}
+
+.dashboard-page {
+  .page-content {
+  }
+}
