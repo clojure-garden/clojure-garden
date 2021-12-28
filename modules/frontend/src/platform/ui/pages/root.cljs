@@ -1,8 +1,7 @@
 (ns platform.ui.pages.root
   (:require
     [antd.core :as antd]
-    [antd.icons :as icons]
-    [clojure.string :as string]
+    [clojure.string :as str]
     [platform.ui.components :as components]
     [platform.ui.pages.dashboard.view :as dashboard]
     [platform.ui.pages.landing.view :as landing]
@@ -23,7 +22,7 @@
   (if-not @(rf/subscribe [:app/initialized?])
     [loading-page]
     (let [route-name @(rf/subscribe [:navigation/route-name])]
-      (condp string/starts-with? (str route-name)
+      (condp str/starts-with? (str route-name)
         ":page/landing" [landing/page]
         ":page/dashboard" [dashboard/page]
         :else [not-found/page]))))

@@ -1,8 +1,7 @@
 (ns platform.ui.pages.dashboard.view
   (:require
     [antd.core :as antd]
-    [platform.ui.components :as components]
-    [platform.ui.utils.string :refer [format]]))
+    [platform.ui.components :as components]))
 
 
 (defn content

@@ -2,7 +2,6 @@
   (:require
     [antd.core :as antd]
     [day8.re-frame.tracing :refer-macros [fn-traced]]
-    [platform.ui.utils.string :refer [format]]
     [re-frame.core :as rf]))
 
 
