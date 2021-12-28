@@ -3,4 +3,5 @@
  :rules {:blank-lines {:max-consecutive 3}
          :types       {:enabled? false}
          :namespaces  {:import-break-width 130}
-         :indentation {:indents {jdbc/with-transaction [[:inner 0]]}}}}
+         :indentation {:indents {jdbc/with-transaction [[:inner 0]]
+                                 fn-traced             [[:inner 0]]}}}}
