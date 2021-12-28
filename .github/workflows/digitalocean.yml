@@ -54,4 +54,5 @@ jobs:
             git pull
             source deployment/digitalocean/.env
             docker-compose -f deployment/digitalocean/docker-compose.yml down
+            docker-compose -f deployment/digitalocean/docker-compose.yml pull
             docker-compose -f deployment/digitalocean/docker-compose.yml up -d
