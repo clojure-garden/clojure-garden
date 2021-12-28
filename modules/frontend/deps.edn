@@ -6,6 +6,7 @@
                                        :exclusions  [cljsjs/react cljsjs/react-dom cljsjs/react-dom-server]}
            re-frame/re-frame          {:mvn/version "1.2.0"}
            metosin/reitit             {:mvn/version "0.5.15"}
+           metosin/malli              {:mvn/version "0.7.5"}
            tongue/tongue              {:mvn/version "0.4.3"}
            com.lambdaisland/glogi     {:mvn/version "1.1.144"}
            applied-science/js-interop {:mvn/version "0.3.1"}}
