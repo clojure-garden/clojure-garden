@@ -4,7 +4,7 @@
     [clojure.set :as set]
     [clojure.string :as str]
     [clojure.xml :as xml]
-    [platform.client.common :refer [request-rest build-url]]))
+    [platform.common :refer [request-rest build-url]]))
 
 
 (def ^:private clojars-repo-url "https://clojars.org/repo")

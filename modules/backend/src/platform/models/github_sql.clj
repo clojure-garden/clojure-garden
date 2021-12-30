@@ -5,8 +5,7 @@
     [honey.sql :as sql]
     [honey.sql.helpers :as helpers]
     [next.jdbc :as jdbc]
-    [next.jdbc.date-time]
-    [platform.client.common :as common])
+    [platform.jdbc.wrappers :as jw])
   (:import
     (java.util
       UUID)))
@@ -14,16 +13,16 @@
 
 (defn- insert-license!
   [db {:keys [name nickname url pseudo-license] :as _license}]
-  (jdbc/execute! db (-> (helpers/insert-into :license)
-                        (helpers/values [{:id                (UUID/randomUUID)
-                                          :name              name
-                                          :nick_name         nickname
-                                          :url               url
-                                          :is_pseudo_license pseudo-license}])
-                        (helpers/on-conflict :name)
-                        (helpers/do-update-set :name)
-                        (helpers/returning :id)
-                        sql/format)))
+  (jw/execute! db (-> (helpers/insert-into :license)
+                      (helpers/values [{:id                (UUID/randomUUID)
+                                        :name              name
+                                        :nick_name         nickname
+                                        :url               url
+                                        :is_pseudo_license pseudo-license}])
+                      (helpers/on-conflict :name)
+                      (helpers/do-update-set :name)
+                      (helpers/returning :id)
+                      sql/format)))
 
 
 (defn- insert-repository!
@@ -36,39 +35,39 @@
   (let [[owner name] (str/split name-with-owner #"/")
         {:keys [readme contributing code-of-conduct issue-template pull-request-template]} doc-files
         {metrics-health-percentage :health-percentage metrics-updated-at :updated-at} metrics]
-    (jdbc/execute! db (-> (helpers/insert-into :repository)
-                          (helpers/values [{:id                      (UUID/randomUUID)
-                                            :owner                   owner
-                                            :name                    name
-                                            :home_page               homepage-url
-                                            :description             description
-                                            :short_description_html  short-description-html
-                                            :default_branch          default-branch
-                                            :created_at              (some-> created-at
-                                                                             instant/read-instant-date)
-                                            :updated_at              (some-> updated-at
-                                                                             instant/read-instant-date)
-                                            :fork_count              fork-count
-                                            :stargazer_count         stargazer-count
-                                            :contributor_count       contributor-count
-                                            :total_downloads         download-count
-                                            :is_mirror               is-mirror
-                                            :mirror_url              mirror_url
-                                            :is_archived             is-archived
-                                            :is_fork                 is-fork
-                                            :has_wiki_enabled        has-wiki-enabled
-                                            :is_locked               is-locked
-                                            :contributing            contributing
-                                            :readme                  readme
-                                            :code_of_conduct         code-of-conduct
-                                            :issue_template          issue-template
-                                            :pull_request_template   pull-request-template
-                                            :documentation_health    metrics-health-percentage
-                                            :health_state_updated_at (some-> metrics-updated-at
-                                                                             instant/read-instant-date)
-                                            :license_id              license-id}])
-                          (helpers/returning :id)
-                          sql/format))))
+    (jw/execute! db (-> (helpers/insert-into :repository)
+                        (helpers/values [{:id                      (UUID/randomUUID)
+                                          :owner                   owner
+                                          :name                    name
+                                          :home_page               homepage-url
+                                          :description             description
+                                          :short_description_html  short-description-html
+                                          :default_branch          default-branch
+                                          :created_at              (some-> created-at
+                                                                           instant/read-instant-date)
+                                          :updated_at              (some-> updated-at
+                                                                           instant/read-instant-date)
+                                          :fork_count              fork-count
+                                          :stargazer_count         stargazer-count
+                                          :contributor_count       contributor-count
+                                          :total_downloads         download-count
+                                          :is_mirror               is-mirror
+                                          :mirror_url              mirror_url
+                                          :is_archived             is-archived
+                                          :is_fork                 is-fork
+                                          :has_wiki_enabled        has-wiki-enabled
+                                          :is_locked               is-locked
+                                          :contributing            contributing
+                                          :readme                  readme
+                                          :code_of_conduct         code-of-conduct
+                                          :issue_template          issue-template
+                                          :pull_request_template   pull-request-template
+                                          :documentation_health    metrics-health-percentage
+                                          :health_state_updated_at (some-> metrics-updated-at
+                                                                           instant/read-instant-date)
+                                          :license_id              license-id}])
+                        (helpers/returning :id)
+                        sql/format))))
 
 
 (defn- prepare-issue
@@ -88,23 +87,23 @@
   [db repository-id issues]
   (let [prepared-issues (mapv #(prepare-issue repository-id %) issues)]
     (when-not (empty? prepared-issues)
-      (jdbc/execute! db (-> (helpers/insert-into :issue)
-                            (helpers/values prepared-issues)
-                            sql/format)))))
+      (jw/execute! db (-> (helpers/insert-into :issue)
+                          (helpers/values prepared-issues)
+                          sql/format)))))
 
 
 (defn insert-release!
   [db repository-id {:keys [name tag-name created-at download-count] :as _release}]
-  (jdbc/execute! db (-> (helpers/insert-into :release)
-                        (helpers/values [{:id            (UUID/randomUUID)
-                                          :name          name
-                                          :tag_name      tag-name
-                                          :created_at    (some-> created-at
-                                                                 instant/read-instant-date)
-                                          :downloads     download-count
-                                          :repository_id repository-id}])
-                        (helpers/returning :id)
-                        sql/format)))
+  (jw/execute! db (-> (helpers/insert-into :release)
+                      (helpers/values [{:id            (UUID/randomUUID)
+                                        :name          name
+                                        :tag_name      tag-name
+                                        :created_at    (some-> created-at
+                                                               instant/read-instant-date)
+                                        :downloads     download-count
+                                        :repository_id repository-id}])
+                      (helpers/returning :id)
+                      sql/format)))
 
 
 (defn- prepare-asset
@@ -119,9 +118,9 @@
   [db release-id assets]
   (let [prepared-assets (mapv #(prepare-asset release-id %) assets)]
     (when-not (empty? prepared-assets)
-      (jdbc/execute! db (-> (helpers/insert-into :asset)
-                            (helpers/values prepared-assets)
-                            sql/format)))))
+      (jw/execute! db (-> (helpers/insert-into :asset)
+                          (helpers/values prepared-assets)
+                          sql/format)))))
 
 
 (defn- insert-releases!
@@ -136,21 +135,21 @@
 
 (defn insert-topic!
   [db topic-name]
-  (jdbc/execute! db (-> (helpers/insert-into :topic)
-                        (helpers/values [{:id   (UUID/randomUUID)
-                                          :name topic-name}])
-                        (helpers/on-conflict :name)
-                        (helpers/do-update-set :name)
-                        (helpers/returning :id)
-                        sql/format)))
+  (jw/execute! db (-> (helpers/insert-into :topic)
+                      (helpers/values [{:id   (UUID/randomUUID)
+                                        :name topic-name}])
+                      (helpers/on-conflict :name)
+                      (helpers/do-update-set :name)
+                      (helpers/returning :id)
+                      sql/format)))
 
 
 (defn insert-repository-topic!
   [db repository-id topic-id]
-  (jdbc/execute! db (-> (helpers/insert-into :repository_topic)
-                        (helpers/values [{:repository_id repository-id
-                                          :topic_id      topic-id}])
-                        sql/format)))
+  (jw/execute! db (-> (helpers/insert-into :repository_topic)
+                      (helpers/values [{:repository_id repository-id
+                                        :topic_id      topic-id}])
+                      sql/format)))
 
 
 (defn- insert-topics!
@@ -165,24 +164,24 @@
 
 (defn- insert-language!
   [db {:keys [name color] :as _language}]
-  (jdbc/execute! db (-> (helpers/insert-into :language)
-                        (helpers/values [{:id    (UUID/randomUUID)
-                                          :name  name
-                                          :color color}])
-                        (helpers/on-conflict :name)
-                        (helpers/do-update-set :name)
-                        (helpers/returning :id)
-                        sql/format)))
+  (jw/execute! db (-> (helpers/insert-into :language)
+                      (helpers/values [{:id    (UUID/randomUUID)
+                                        :name  name
+                                        :color color}])
+                      (helpers/on-conflict :name)
+                      (helpers/do-update-set :name)
+                      (helpers/returning :id)
+                      sql/format)))
 
 
 (defn- insert-repository-language!
   [db primary-language? size repository-id language-id]
-  (jdbc/execute! db (-> (helpers/insert-into :repository_language)
-                        (helpers/values [{:repository_id       repository-id
-                                          :language_id         language-id
-                                          :size                size
-                                          :is_primary_language primary-language?}])
-                        sql/format)))
+  (jw/execute! db (-> (helpers/insert-into :repository_language)
+                      (helpers/values [{:repository_id       repository-id
+                                        :language_id         language-id
+                                        :size                size
+                                        :is_primary_language primary-language?}])
+                      sql/format)))
 
 
 (defn- insert-languages!
@@ -218,7 +217,7 @@
                          [:= :owner owner]
                          [:= :name name]]}]
     (->> (sql/format sqlmap)
-         (jdbc/execute-one! db)
+         (jw/execute-one! db)
          (boolean))))
 
 
@@ -242,20 +241,18 @@
                  :left-join [:license [:= :repository/license-id :license/id]]
                  :order-by [[:repository/owner :asc] [:repository/name :asc]]}]
     (->> (sql/format sql-map)
-         (jdbc/execute! db)
-         (common/transform-to-kebab-keywords))))
+         (jw/execute! db))))
 
 
 (defn select-repository-topics
   [db repository-id]
-  (let [sql-map {:select    [:topic/id :topic/name]
+  (let [sql-map {:select    [[:topic/id :id] [:topic/name :name]]
                  :from      [:repository-topic]
                  :left-join [:topic [:= :repository-topic/topic-id :topic/id]]
                  :where     [:= :repository-topic/repository-id repository-id]
                  :order-by [[:topic/name :asc]]}]
     (->> (sql/format sql-map)
-         (jdbc/execute! db)
-         (common/transform-to-kebab-keywords))))
+         (jw/execute! db))))
 
 
 (defn select-repository-languages
@@ -270,8 +267,7 @@
                  :where     [:= :repository-language/repository-id repository-id]
                  :order-by  [[:language/name :asc]]}]
     (->> (sql/format sql-map)
-         (jdbc/execute! db)
-         (common/transform-to-kebab-keywords))))
+         (jw/execute! db))))
 
 
 (defn select-repository-issues
@@ -282,14 +278,13 @@
                  :where     [:= :issue/repository-id repository-id]
                  :order-by  [[:issue/created-at :asc]]}]
     (->> (sql/format sql-map)
-         (jdbc/execute! db)
-         (common/transform-to-kebab-keywords))))
+         (jw/execute! db))))
 
 
 (defn select-repositories
   [db]
   (let [base-info (select-repositories-base-info db)]
-    (mapv (fn [{id :repository/id :as base-info}]
+    (mapv (fn [{:as base-info :keys [id]}]
             (assoc base-info
                    :languages (select-repository-languages db id)
                    :topics (select-repository-topics db id)))

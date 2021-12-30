@@ -5,8 +5,8 @@
     [clojure.java.io :as io]
     [clojure.walk :as clj-walk]
     [java-time :as jt]
-    [platform.client.common :as client-common]
     [platform.client.github :as github-client]
+    [platform.common :as common]
     [platform.models.clojars-sql :as clj-sql]))
 
 
@@ -28,7 +28,7 @@
 (defn- extract-artifact-urls
   [artifacts]
   (reduce (fn [acc {:keys [group-id artifact-id]}]
-            (conj acc (client-common/build-url clojars-url group-id artifact-id)))
+            (conj acc (common/build-url clojars-url group-id artifact-id)))
           [] artifacts))
 
 

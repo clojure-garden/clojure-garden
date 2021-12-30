@@ -1,4 +1,4 @@
-(ns platform.client.common
+(ns platform.common
   (:require
     [camel-snake-kebab.core :as csk]
     [camel-snake-kebab.extras :as cske]
