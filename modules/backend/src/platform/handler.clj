@@ -24,9 +24,11 @@
   (ring/ring-handler
     (ring/router
       [["/status" {:get (constantly {:status 200, :body "Ok"})}]
-       ["/github/repository" {:get {:parameters {:query {:url string?}}
-                                    :handler github-ctl/pull-repository-info-handler}}]
-       ["/github/repository/all" {:get {:handler github-ctl/pull-repository-info-all-handler}}]
+       ["/github/repository"
+        ["/pull" {:get {:parameters {:query {:url string?}}
+                        :handler github-ctl/pull-repository-info-handler}}]
+        ["/pull-all" {:get {:handler github-ctl/pull-repository-info-all-handler}}]
+        ["/all" {:get {:handler github-ctl/get-repository-info-all-handler}}]]
        ["/clojars/artifact" {:get {:parameters {:query {:url string?}}
                                    :handler clojars-ctl/pull-artifact-info-handler}}]
        ["/clojars/artifact/all" {:get {:handler clojars-ctl/pull-artifact-info-all-handler}}]]

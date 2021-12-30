@@ -5,7 +5,8 @@
     [honey.sql :as sql]
     [honey.sql.helpers :as helpers]
     [next.jdbc :as jdbc]
-    [next.jdbc.date-time])
+    [next.jdbc.date-time]
+    [platform.client.common :as common])
   (:import
     (java.util
       UUID)))
@@ -219,3 +220,77 @@
     (->> (sql/format sqlmap)
          (jdbc/execute-one! db)
          (boolean))))
+
+
+(defn select-repositories-base-info
+  [db]
+  (let [sql-map {:select [:repository/id :repository/owner :repository/name
+                          :repository/home_page :repository/default_branch
+                          :repository/created_at :repository/updated_at
+                          :repository/fork_count :repository/stargazer_count
+                          :repository/contributor_count :repository/total_downloads
+                          :repository/is_mirror :repository/mirror_url
+                          :repository/is_archived
+                          :repository/is_fork
+                          :repository/has_wiki_enabled
+                          :repository/is_locked :repository/lock_reason
+                          :repository/contributing  :repository/readme :repository/code_of_conduct
+                          :repository/issue_template :repository/pull_request_template
+                          :repository/documentation_health :repository/health_state_updated_at
+                          [:license/name :license-name] [:license/url :license-url] [:license/is_pseudo_license]]
+                 :from [:repository]
+                 :left-join [:license [:= :repository/license-id :license/id]]
+                 :order-by [[:repository/owner :asc] [:repository/name :asc]]}]
+    (->> (sql/format sql-map)
+         (jdbc/execute! db)
+         (common/transform-to-kebab-keywords))))
+
+
+(defn select-repository-topics
+  [db repository-id]
+  (let [sql-map {:select    [:topic/id :topic/name]
+                 :from      [:repository-topic]
+                 :left-join [:topic [:= :repository-topic/topic-id :topic/id]]
+                 :where     [:= :repository-topic/repository-id repository-id]
+                 :order-by [[:topic/name :asc]]}]
+    (->> (sql/format sql-map)
+         (jdbc/execute! db)
+         (common/transform-to-kebab-keywords))))
+
+
+(defn select-repository-languages
+  [db repository-id]
+  (let [sql-map {:select    [[:language/id :id]
+                             [:language/name :name]
+                             [:language/color :color]
+                             [:repository-language/size :size]
+                             [:repository-language/is-primary-language :is-primary-language]]
+                 :from      [:repository-language]
+                 :left-join [:language [:= :repository-language/language-id :language/id]]
+                 :where     [:= :repository-language/repository-id repository-id]
+                 :order-by  [[:language/name :asc]]}]
+    (->> (sql/format sql-map)
+         (jdbc/execute! db)
+         (common/transform-to-kebab-keywords))))
+
+
+(defn select-repository-issues
+  [db repository-id]
+  (let [sql-map {:select    [:issue/id :issue/title :issue/created-at
+                             :issue/url :issue/closed :issue/closed-at]
+                 :from      [:issue]
+                 :where     [:= :issue/repository-id repository-id]
+                 :order-by  [[:issue/created-at :asc]]}]
+    (->> (sql/format sql-map)
+         (jdbc/execute! db)
+         (common/transform-to-kebab-keywords))))
+
+
+(defn select-repositories
+  [db]
+  (let [base-info (select-repositories-base-info db)]
+    (mapv (fn [{id :repository/id :as base-info}]
+            (assoc base-info
+                   :languages (select-repository-languages db id)
+                   :topics (select-repository-topics db id)))
+          base-info)))
