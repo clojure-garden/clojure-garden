@@ -3,8 +3,8 @@
     [clojure.string :as str]
     [graphql-builder.core :as gql-builder]
     [graphql-builder.parser :as gql-parser]
-    [platform.client.common :refer [parse-int load-query build-url transform-to-kebab-keywords
-                                    request-graphql request-rest safe not-found-response-exception-handler]]
+    [platform.common :refer [parse-int load-query build-url transform-to-kebab-keywords
+                             request-graphql request-rest safe not-found-response-exception-handler]]
     [re-graph.core :as re-graph]))
 
 
