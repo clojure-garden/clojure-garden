@@ -47,8 +47,8 @@
                           [:wrap-cors cors]]}
          ["/api"
           ["/v1"
-           ["github/repositories" {:middleware [[:wrap-context ctx]]
-                                   :get {:handler handlers/get-repository-info-all-handler}}]]]
+           ["/github/repositories" {:middleware [[:wrap-context ctx]]
+                                    :get {:handler handlers/get-repository-info-all-handler}}]]]
          ["/dev"
           ["/github/pull" {:get {:parameters {:query {:url string?}}
                                  :handler github-ctl/pull-repository-info-handler}}]
@@ -60,8 +60,8 @@
           ["/alive" {:get (constantly {:status 200})}]
           ["/ready" {:get (constantly {:status 200})}]]
          ["/ping" {:get {:handler (constantly {:status 200
-                                               :headers {"content-type" "text/plain"}
-                                               :body     "Ok"})}}]
+                                               :headers {"Content-Type" "text/plain"}
+                                               :body     "pong"})}}]
          ["/echo" {:get {:handler (fn [req]
                                     {:status 200
                                      :body   req})}}]]
