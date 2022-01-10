@@ -4,7 +4,7 @@
     [integrant.core :as ig]
     [integrant.repl :as ig-repl]
     [integrant.repl.state :as ig-state]
-    [platform.main :as system]))
+    [platform.system :as system]))
 
 
 (tools.repl/set-refresh-dirs "src" "dev/src" "test/src")
