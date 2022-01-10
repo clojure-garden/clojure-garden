@@ -5,9 +5,9 @@
     [clojure.java.io :as io]
     [clojure.walk :as clj-walk]
     [java-time :as jt]
-    [platform.client.github :as github-client]
+    [platform.clojars.clojars-sql :as clj-sql]
     [platform.common :as common]
-    [platform.models.clojars-sql :as clj-sql]))
+    [platform.github.api-client :as github-client]))
 
 
 (def ^:private clojars-url "https://clojars.org")

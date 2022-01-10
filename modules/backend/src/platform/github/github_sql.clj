@@ -1,11 +1,9 @@
-(ns platform.models.github-sql
+(ns platform.github.github-sql
   (:require
     [clojure.instant :as instant]
     [clojure.string :as str]
-    [honey.sql :as sql]
     [honey.sql.helpers :as helpers]
-    [next.jdbc :as jdbc]
-    [platform.jdbc.wrappers :as jw])
+    [platform.storage.jdbc-wrappers :as jw])
   (:import
     (java.util
       UUID)))
@@ -22,7 +20,7 @@
                       (helpers/on-conflict :name)
                       (helpers/do-update-set :name)
                       (helpers/returning :id)
-                      sql/format)))
+                      jw/sql-format)))
 
 
 (defn- insert-repository!
@@ -67,7 +65,7 @@
                                                                            instant/read-instant-date)
                                           :license_id              license-id}])
                         (helpers/returning :id)
-                        sql/format))))
+                        jw/sql-format))))
 
 
 (defn- prepare-issue
@@ -89,7 +87,7 @@
     (when-not (empty? prepared-issues)
       (jw/execute! db (-> (helpers/insert-into :issue)
                           (helpers/values prepared-issues)
-                          sql/format)))))
+                          jw/sql-format)))))
 
 
 (defn insert-release!
@@ -103,7 +101,7 @@
                                         :downloads     download-count
                                         :repository_id repository-id}])
                       (helpers/returning :id)
-                      sql/format)))
+                      jw/sql-format)))
 
 
 (defn- prepare-asset
@@ -120,7 +118,7 @@
     (when-not (empty? prepared-assets)
       (jw/execute! db (-> (helpers/insert-into :asset)
                           (helpers/values prepared-assets)
-                          sql/format)))))
+                          jw/sql-format)))))
 
 
 (defn- insert-releases!
@@ -141,7 +139,7 @@
                       (helpers/on-conflict :name)
                       (helpers/do-update-set :name)
                       (helpers/returning :id)
-                      sql/format)))
+                      jw/sql-format)))
 
 
 (defn insert-repository-topic!
@@ -149,7 +147,7 @@
   (jw/execute! db (-> (helpers/insert-into :repository_topic)
                       (helpers/values [{:repository_id repository-id
                                         :topic_id      topic-id}])
-                      sql/format)))
+                      jw/sql-format)))
 
 
 (defn- insert-topics!
@@ -171,7 +169,7 @@
                       (helpers/on-conflict :name)
                       (helpers/do-update-set :name)
                       (helpers/returning :id)
-                      sql/format)))
+                      jw/sql-format)))
 
 
 (defn- insert-repository-language!
@@ -181,7 +179,7 @@
                                         :language_id         language-id
                                         :size                size
                                         :is_primary_language primary-language?}])
-                      sql/format)))
+                      jw/sql-format)))
 
 
 (defn- insert-languages!
@@ -197,16 +195,16 @@
 
 (defn insert-repository-info!
   [db repository-info]
-  (jdbc/with-transaction [tx db]
-    (let [[{license-id :license/id}] (some->> (:license-info repository-info)
-                                              (insert-license! tx))
-          [{repository-id :repository/id}] (insert-repository! tx license-id repository-info)]
-      (insert-issues! tx repository-id (:issues repository-info))
-      (insert-releases! tx repository-id (:releases repository-info))
-      (insert-topics! tx repository-id (:topics repository-info))
-      (insert-languages! tx repository-id
-                         (:primary-language repository-info)
-                         (:languages repository-info)))))
+  (jw/with-transaction [tx db]
+                       (let [[{license-id :license/id}] (some->> (:license-info repository-info)
+                                                                 (insert-license! tx))
+                             [{repository-id :repository/id}] (insert-repository! tx license-id repository-info)]
+                         (insert-issues! tx repository-id (:issues repository-info))
+                         (insert-releases! tx repository-id (:releases repository-info))
+                         (insert-topics! tx repository-id (:topics repository-info))
+                         (insert-languages! tx repository-id
+                                            (:primary-language repository-info)
+                                            (:languages repository-info)))))
 
 
 (defn repository-exists?
@@ -216,7 +214,7 @@
                 :where  [:and
                          [:= :owner owner]
                          [:= :name name]]}]
-    (->> (sql/format sqlmap)
+    (->> (jw/sql-format sqlmap)
          (jw/execute-one! db)
          (boolean))))
 
@@ -240,7 +238,7 @@
                  :from [:repository]
                  :left-join [:license [:= :repository/license-id :license/id]]
                  :order-by [[:repository/owner :asc] [:repository/name :asc]]}]
-    (->> (sql/format sql-map)
+    (->> (jw/sql-format sql-map)
          (jw/execute! db))))
 
 
@@ -251,7 +249,7 @@
                  :left-join [:topic [:= :repository-topic/topic-id :topic/id]]
                  :where     [:= :repository-topic/repository-id repository-id]
                  :order-by [[:topic/name :asc]]}]
-    (->> (sql/format sql-map)
+    (->> (jw/sql-format sql-map)
          (jw/execute! db))))
 
 
@@ -265,7 +263,7 @@
                  :left-join [:language [:= :repository-language/language-id :language/id]]
                  :where     [:= :repository-language/repository-id repository-id]
                  :order-by  [[:language/name :asc]]}]
-    (->> (sql/format sql-map)
+    (->> (jw/sql-format sql-map)
          (jw/execute! db))))
 
 
@@ -276,7 +274,7 @@
                  :from      [:issue]
                  :where     [:= :issue/repository-id repository-id]
                  :order-by  [[:issue/created-at :asc]]}]
-    (->> (sql/format sql-map)
+    (->> (jw/sql-format sql-map)
          (jw/execute! db))))
 
 

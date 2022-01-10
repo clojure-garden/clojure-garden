@@ -1,9 +1,9 @@
-(ns platform.controllers.clojars-ctl
+(ns platform.clojars.clojars-ctl
   (:require
     [clojure.core.async :as async]
     [clojure.tools.logging :as log]
-    [platform.client.clojars :as clojars-client]
-    [platform.models.clojars-sql :as clojars-sql]
+    [platform.clojars.api-client :as clojars-client]
+    [platform.clojars.clojars-sql :as clojars-sql]
     [platform.utils.seeder :as seeder]
     [ring.util.response :as resp])
   (:import

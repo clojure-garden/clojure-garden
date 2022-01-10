@@ -1,4 +1,4 @@
-(ns platform.client.github
+(ns platform.github.api-client
   (:require
     [clojure.string :as str]
     [graphql-builder.core :as gql-builder]

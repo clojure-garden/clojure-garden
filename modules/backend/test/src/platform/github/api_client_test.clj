@@ -1,7 +1,7 @@
-(ns platform.client.github-test
+(ns platform.github.api-client-test
   (:require
     [clojure.test :refer [deftest testing is]]
-    [platform.client.github :refer [parse-repository-url]]))
+    [platform.github.api-client :refer [parse-repository-url]]))
 
 
 (deftest ^:integration dummy-test

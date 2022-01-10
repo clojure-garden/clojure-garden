@@ -1,7 +1,7 @@
-(ns platform.client.clojars-test
+(ns platform.clojars.api-client-test
   (:require
     [clojure.test :refer [deftest testing is]]
-    [platform.client.clojars :refer [parse-artifact-url]]))
+    [platform.clojars.api-client :refer [parse-artifact-url]]))
 
 
 (deftest ^:unit test-parse-repository-url

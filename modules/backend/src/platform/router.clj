@@ -2,8 +2,6 @@
   (:require
     [muuntaja.core :as m]
     [platform.api.v1.handlers :as handlers]
-    [platform.controllers.clojars-ctl :as clojars-ctl]
-    [platform.controllers.github-ctl :as github-ctl]
     [platform.system.web.middleware.context :as middleware.context]
     [platform.system.web.middleware.cors :as middleware.cors]
     [reitit.dev.pretty :as pretty]
@@ -49,13 +47,6 @@
           ["/v1"
            ["/github/repositories" {:middleware [[:wrap-context ctx]]
                                     :get {:handler handlers/get-repository-info-all-handler}}]]]
-         ["/dev"
-          ["/github/pull" {:get {:parameters {:query {:url string?}}
-                                 :handler github-ctl/pull-repository-info-handler}}]
-          ["/github/pull-all" {:get {:handler github-ctl/pull-repository-info-all-handler}}]
-          ["/clojars/pull" {:get {:parameters {:query {:url string?}}
-                                  :handler clojars-ctl/pull-artifact-info-handler}}]
-          ["/clojars/pull-all" {:get {:handler clojars-ctl/pull-artifact-info-all-handler}}]]
          ["/health"
           ["/alive" {:get (constantly {:status 200})}]
           ["/ready" {:get (constantly {:status 200})}]]

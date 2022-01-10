@@ -1,4 +1,4 @@
-(ns platform.client.clojars
+(ns platform.clojars.api-client
   (:require
     [camel-snake-kebab.core :as csk]
     [clojure.set :as set]
