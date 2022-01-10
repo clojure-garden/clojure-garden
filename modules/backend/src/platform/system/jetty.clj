@@ -11,10 +11,10 @@
   (merge {:port 8080} config))
 
 
-(defmethod ig/init-key :platform.system/jetty [_ {:keys [handler port] :as config}]
+(defmethod ig/init-key :platform.system/jetty [_ {:keys [router port] :as config}]
   (println "\nServer running on port: " port)
-  (let [options (-> config (dissoc :handler) (assoc :join? false))]
-    (jetty/run-jetty handler options)))
+  (let [options (-> config (dissoc :router) (assoc :join? false))]
+    (jetty/run-jetty router options)))
 
 
 (defmethod ig/halt-key! :platform.system/jetty [_ ^Server server]
