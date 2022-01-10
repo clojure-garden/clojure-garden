@@ -2,9 +2,9 @@
                          :host            "0.0.0.0"
                          :port            8080}
 
- :platform.system/app-runner {:cors {:access-control-allow-origin  "*"
-                                     :access-control-allow-methods [:post :get]
-                                     :access-control-allow-headers ["Content-Type"]}
+ :platform.system/app-runner {:cors {:access-control-allow-origin  ".*"
+                                     :access-control-allow-methods #{:head :options :get :post}
+                                     :access-control-allow-headers #{:accept :content-type :accept-language :x-session-id :x-csrf-token}}
                               :db #ig/ref :platform.system/database}
 
  :platform.system/database-migrator {:store                        :database
