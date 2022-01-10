@@ -5,7 +5,7 @@
 
 (defn get-repository-info-all-handler
   [req]
-  (let [{{:keys [datasource]} :db} req]
+  (let [datasource (get-in req [:platform.system/ctx :db :datasource])]
     {:status 200
      :body (pr-str (github-sql/select-repositories datasource))}))
 
