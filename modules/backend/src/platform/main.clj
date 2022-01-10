@@ -38,7 +38,9 @@
   ([modules custom-profile]
    (let [profile (or custom-profile (some-> (System/getenv "RUN_PROFILE") keyword) :stage)
          config (read-config "config/config.edn" profile)]
-     (ig/load-namespaces config modules)
+     (-> config
+         (assoc-in [:platform.system/app-runner :profile] profile)
+         (ig/load-namespaces modules))
      config)))
 
 

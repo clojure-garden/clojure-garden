@@ -23,21 +23,21 @@
 
 (defn go
   "Start the system services with Integrant REPL."
-  ([] (go :dev))
+  ([] (go :develop))
   ([profile] (integrant-prep! profile) (ig-repl/go)))
 
 
 (defn reset
   "Read updates from the configuration and restart the system services with Integrant REPL.
    Refreshes only changed source code files."
-  ([] (reset :dev))
+  ([] (reset :develop))
   ([profile] (integrant-prep! profile) (ig-repl/reset)))
 
 
 (defn reset-all
   "Read updates from the configuration and restart the system services with Integrant REPL.
    Refreshes all source code files."
-  ([] (reset-all :dev))
+  ([] (reset-all :develop))
   ([profile] (integrant-prep! profile) (ig-repl/reset-all)))
 
 
