@@ -246,7 +246,7 @@
 
 (defn select-repository-topics
   [db repository-id]
-  (let [sql-map {:select    [[:topic/id :id] [:topic/name :name]]
+  (let [sql-map {:select    [[:topic/name :name]]
                  :from      [:repository-topic]
                  :left-join [:topic [:= :repository-topic/topic-id :topic/id]]
                  :where     [:= :repository-topic/repository-id repository-id]
@@ -257,8 +257,7 @@
 
 (defn select-repository-languages
   [db repository-id]
-  (let [sql-map {:select    [[:language/id :id]
-                             [:language/name :name]
+  (let [sql-map {:select    [[:language/name :name]
                              [:language/color :color]
                              [:repository-language/size :size]
                              [:repository-language/is-primary-language :is-primary-language]]

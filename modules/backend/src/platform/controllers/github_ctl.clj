@@ -63,11 +63,3 @@
                     (Thread/sleep 10000))
                   project-urls))))
   (resp/redirect "/status"))
-
-
-(defn get-repository-info-all-handler
-  [req]
-  (let [{{:keys [datasource]} :db} req]
-    {:status 200
-     :headers {"Content-Type" "application/edn"}
-     :body (pr-str (github-sql/select-repositories datasource))}))
