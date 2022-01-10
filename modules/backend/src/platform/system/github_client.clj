@@ -2,7 +2,7 @@
   (:require
     [clojure.tools.logging :as log]
     [integrant.core :as ig]
-    [platform.client.github :as github]))
+    [platform.github.api-client :as github]))
 
 
 (defmethod ig/init-key :platform.system/github-client [_ github-options]

@@ -1,6 +1,6 @@
 (ns platform.api.v1.handlers
   (:require
-    [platform.models.github-sql :as github-sql]))
+    [platform.github.github-sql :as github-sql]))
 
 
 (defn get-repository-info-all-handler

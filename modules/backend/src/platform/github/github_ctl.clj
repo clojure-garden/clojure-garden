@@ -1,10 +1,10 @@
-(ns platform.controllers.github-ctl
+(ns platform.github.github-ctl
   (:require
     [clojure.core.async :as async]
     [clojure.string :as str]
     [clojure.tools.logging :as log]
-    [platform.client.github :as github-client]
-    [platform.models.github-sql :as github-sql]
+    [platform.github.api-client :as github-client]
+    [platform.github.github-sql :as github-sql]
     [platform.utils.seeder :as seeder]
     [platform.utils.tagger :as tagger]
     [ring.util.response :as resp])
