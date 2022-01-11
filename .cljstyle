@@ -4,4 +4,5 @@
          :types       {:enabled? false}
          :namespaces  {:import-break-width 130}
          :indentation {:indents {jdbc/with-transaction [[:inner 0]]
+                                 jw/with-transaction   [[:inner 0]]
                                  fn-traced             [[:inner 0]]}}}}
