@@ -4,8 +4,9 @@
 
  :config-paths  ["com.github.seancorfield/next.jdbc"]
 
- :lint-as       {graphql-builder.parser/defgraphql clojure.core/def
-                 day8.re-frame.tracing/fn-traced   clojure.core/fn}
+ :lint-as       {graphql-builder.parser/defgraphql                  clojure.core/def
+                 day8.re-frame.tracing/fn-traced                    clojure.core/fn
+                 platform.storage.jdbc-wrappers/with-transaction    next.jdbc/with-transaction}
 
  :linters       {:consistent-alias
                  {:aliases {clojure.pprint pprint
