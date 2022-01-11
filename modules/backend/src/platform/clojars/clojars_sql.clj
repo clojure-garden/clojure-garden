@@ -82,9 +82,9 @@
 (defn insert-artifact-info!
   [db artifact-info from-clojars]
   (jw/with-transaction [tx db]
-                       (let [artifact-info (conj artifact-info [:from-clojars from-clojars])
-                             [{artifact-id :artifact/id}] (insert-artifact! tx artifact-info)]
-                         (insert-versions! tx artifact-id (:recent-versions artifact-info)))))
+    (let [artifact-info (conj artifact-info [:from-clojars from-clojars])
+          [{artifact-id :artifact/id}] (insert-artifact! tx artifact-info)]
+      (insert-versions! tx artifact-id (:recent-versions artifact-info)))))
 
 
 (defn artifact-exists?
