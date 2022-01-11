@@ -32,7 +32,7 @@
                             :server-name        #profile {:develop            "localhost"
                                                           :stage         #env DATABASE_HOST}
                             :port-number        #profile {:develop #long #env BACKEND_PG_PORT
-                                                          :stage #long #env DATABASE_PORT}
+                                                          :stage   #long #env DATABASE_PORT}
                             :register-mbeans             false}
 
  :platform.system/github-client {:server-name                 :service-github

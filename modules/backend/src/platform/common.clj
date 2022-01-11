@@ -37,6 +37,11 @@
     (Integer/parseInt number-string)))
 
 
+(defn get-percentage
+  [place total-count]
+  (/ (* place 100.0) total-count))
+
+
 (defn load-query
   [queries-map query-name]
   (get-in queries-map [:query query-name]))
