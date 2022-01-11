@@ -196,15 +196,15 @@
 (defn insert-repository-info!
   [db repository-info]
   (jw/with-transaction [tx db]
-                       (let [[{license-id :license/id}] (some->> (:license-info repository-info)
-                                                                 (insert-license! tx))
-                             [{repository-id :repository/id}] (insert-repository! tx license-id repository-info)]
-                         (insert-issues! tx repository-id (:issues repository-info))
-                         (insert-releases! tx repository-id (:releases repository-info))
-                         (insert-topics! tx repository-id (:topics repository-info))
-                         (insert-languages! tx repository-id
-                                            (:primary-language repository-info)
-                                            (:languages repository-info)))))
+    (let [[{license-id :license/id}] (some->> (:license-info repository-info)
+                                              (insert-license! tx))
+          [{repository-id :repository/id}] (insert-repository! tx license-id repository-info)]
+      (insert-issues! tx repository-id (:issues repository-info))
+      (insert-releases! tx repository-id (:releases repository-info))
+      (insert-topics! tx repository-id (:topics repository-info))
+      (insert-languages! tx repository-id
+                         (:primary-language repository-info)
+                         (:languages repository-info)))))
 
 
 (defn repository-exists?
