@@ -1,4 +1,4 @@
-(ns platform.github.repository
+(ns platform.github.repository.preprocess
   (:require
     [platform.common :as common]))
 
@@ -6,7 +6,9 @@
 (defn get-code-base-size
   [languages]
   (reduce (fn [acc {:keys [size]}]
-            (+' acc size)) 0 languages))
+            (+' acc size))
+          0
+          languages))
 
 
 (defn update-languages
@@ -19,9 +21,19 @@
           languages)))
 
 
+(defn reduce-topics
+  [topics]
+  (reduce (fn [acc {:keys [name]}]
+            (conj acc name))
+          []
+          topics))
+
+
 (defn preprocess-repository
   [repository]
-  (update repository :languages update-languages))
+  (-> repository
+      (update :languages update-languages)
+      (update :topics reduce-topics)))
 
 
 (defn preprocess-repositories
