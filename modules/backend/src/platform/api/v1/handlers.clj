@@ -9,6 +9,5 @@
   (let [datasource (get-in req [:platform.system/ctx :db :datasource])]
     {:status 200
      :body (-> (github-sql/select-repositories datasource)
-               (github-repo/preprocess-repositories)
-               (pr-str))}))
+               (github-repo/preprocess-repositories))}))
 
