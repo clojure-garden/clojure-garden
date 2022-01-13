@@ -93,11 +93,7 @@
   [db]
   (let [tool-box-urls (get-github-project-urls-from-yml (io/resource "database/seeding/tool-box-urls.yml"))
         clojure-doc-urls (get-github-project-urls-from-edn (io/resource "database/seeding/custom-urls.edn"))
-        github-library-search-urls (get-github-project-urls-from-search "library in:readme language:clojure")
-        github-framework-search-urls (get-github-project-urls-from-search "framework in:readme language:clojure")
         clojars-urls (clj-sql/get-github-urls db)]
     (into [] (distinct (concat tool-box-urls
                                clojure-doc-urls
-                               github-library-search-urls
-                               github-framework-search-urls
                                clojars-urls)))))
