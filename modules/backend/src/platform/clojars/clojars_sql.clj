@@ -8,25 +8,25 @@
 
 
 (defn- insert-artifact!
-  [db {:keys [artifact-id group-id homepage description owner
-              latest-version latest-release downloads from-clojars] :as _artifact}]
+  [db {:as _artifact :keys [artifact-id group-id homepage description owner
+                            latest-version latest-release downloads from-clojars]}]
   (jw/execute! db (-> (helpers/insert-into :artifact)
                       (helpers/values [{:id             (UUID/randomUUID)
-                                        :artifact_id    artifact-id
-                                        :group_id       group-id
+                                        :artifact-id    artifact-id
+                                        :group-id       group-id
                                         :homepage       homepage
                                         :description    description
                                         :owner          owner
-                                        :latest_version latest-version
-                                        :latest_release latest-release
+                                        :latest-version latest-version
+                                        :latest-release latest-release
                                         :downloads      downloads
-                                        :from_clojars   from-clojars}])
+                                        :from-clojars   from-clojars}])
                       (helpers/returning :id)
                       jw/sql-format)))
 
 
 (defn- insert-license!
-  [db {:keys [name url] :as _license}]
+  [db {:as _license :keys [name url]}]
   (jw/execute! db (-> (helpers/insert-into :license)
                       (helpers/values [{:id   (UUID/randomUUID)
                                         :name name
@@ -39,9 +39,9 @@
 
 (defn- insert-version-license!
   [db version-id license-id]
-  (jw/execute! db (-> (helpers/insert-into :version_license)
-                      (helpers/values [{:version_id version-id
-                                        :license_id license-id}])
+  (jw/execute! db (-> (helpers/insert-into :version-license)
+                      (helpers/values [{:version-id version-id
+                                        :license-id license-id}])
                       jw/sql-format)))
 
 
@@ -50,25 +50,25 @@
   (when-not (empty? licenses)
     (doall
       (map (fn [license]
-             (let [[{license-id :license/id}] (insert-license! db license)]
+             (let [[{license-id :id}] (insert-license! db license)]
                (insert-version-license! db version-id license-id)))
            licenses))))
 
 
 (defn- insert-version!
-  [db artifact-id {:keys [version downloads] :as _artifact-version}]
+  [db artifact-id {:as _artifact-version :keys [version downloads]}]
   (jw/execute! db (-> (helpers/insert-into :version)
                       (helpers/values [{:id          (UUID/randomUUID)
                                         :name        version
                                         :downloads   downloads
-                                        :artifact_id artifact-id}])
+                                        :artifact-id artifact-id}])
                       (helpers/returning :id)
                       jw/sql-format)))
 
 
 (defn- insert-version-info!
-  [db artifact-id {:keys [licenses] :as version-info}]
-  (let [[{version-id :version/id}] (insert-version! db artifact-id version-info)]
+  [db artifact-id {:as version-info :keys [licenses]}]
+  (let [[{version-id :id}] (insert-version! db artifact-id version-info)]
     (insert-licenses! db version-id licenses)))
 
 
@@ -83,7 +83,7 @@
   [db artifact-info from-clojars]
   (jw/with-transaction [tx db]
     (let [artifact-info (conj artifact-info [:from-clojars from-clojars])
-          [{artifact-id :artifact/id}] (insert-artifact! tx artifact-info)]
+          [{artifact-id :id}] (insert-artifact! tx artifact-info)]
       (insert-versions! tx artifact-id (:recent-versions artifact-info)))))
 
 
@@ -92,8 +92,8 @@
   (let [sqlmap {:select [1]
                 :from   [:artifact]
                 :where  [:and
-                         [:= :group_id group-id]
-                         [:= :artifact_id artifact-id]]}]
+                         [:= :group-id group-id]
+                         [:= :artifact-id artifact-id]]}]
     (->> (jw/sql-format sqlmap)
          (jw/execute-one! db)
          (boolean))))
@@ -106,5 +106,5 @@
                 :where  [:like :homepage "%github%"]}]
     (->> (jw/sql-format sqlmap)
          (jw/execute! db)
-         (mapv :artifact/homepage))))
+         (mapv :homepage))))
 
