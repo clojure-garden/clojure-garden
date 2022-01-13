@@ -54,7 +54,7 @@
   [req]
   (async/thread
     (log/info "Getting a list of GitHub URLs...")
-    (let [{{:keys [datasource]} :db} req
+    (let [datasource (get-in req [:platform.system/ctx :db :datasource])
           project-urls (seeder/get-repository-urls datasource)
           project-tags (tagger/read-clojure-toolbox-data)]
       (log/info (count project-urls) "GitHub URLs will be fetched")

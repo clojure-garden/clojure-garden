@@ -44,7 +44,7 @@
   [req]
   (async/thread
     (log/info "Getting a list of Clojars URLs...")
-    (let [{{:keys [datasource]} :db} req
+    (let [datasource (get-in req [:platform.system/ctx :db :datasource])
           project-urls (seeder/get-artifact-urls)]
       (log/info (count project-urls) "Clojar URLs will be fetched")
       (doall (map (fn [url]
