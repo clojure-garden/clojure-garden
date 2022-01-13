@@ -10,13 +10,13 @@
 
 
 (defn- insert-license!
-  [db {:keys [name nickname url pseudo-license] :as _license}]
+  [db {:as _license :keys [name nickname url pseudo-license]}]
   (jw/execute! db (-> (helpers/insert-into :license)
                       (helpers/values [{:id                (UUID/randomUUID)
                                         :name              name
-                                        :nick_name         nickname
+                                        :nick-name         nickname
                                         :url               url
-                                        :is_pseudo_license pseudo-license}])
+                                        :is-pseudo-license pseudo-license}])
                       (helpers/on-conflict :name)
                       (helpers/do-update-set :name)
                       (helpers/returning :id)
@@ -24,12 +24,12 @@
 
 
 (defn- insert-repository!
-  [db license-id {:keys [name-with-owner homepage-url description
-                         short-description-html default-branch
-                         created-at updated-at fork-count stargazer-count
-                         contributor-count download-count is-mirror mirror_url
-                         is-archived is-fork has-wiki-enabled is-locked
-                         doc-files metrics] :as _repository}]
+  [db license-id {:as _repository :keys [name-with-owner homepage-url description
+                                         short-description-html default-branch
+                                         created-at updated-at fork-count stargazer-count
+                                         contributor-count download-count is-mirror mirror-url
+                                         is-archived is-fork has-wiki-enabled is-locked
+                                         doc-files metrics]}]
   (let [[owner name] (str/split name-with-owner #"/")
         {:keys [readme contributing code-of-conduct issue-template pull-request-template]} doc-files
         {metrics-health-percentage :health-percentage metrics-updated-at :updated-at} metrics]
@@ -37,48 +37,48 @@
                         (helpers/values [{:id                      (UUID/randomUUID)
                                           :owner                   owner
                                           :name                    name
-                                          :home_page               homepage-url
+                                          :home-page               homepage-url
                                           :description             description
-                                          :short_description_html  short-description-html
-                                          :default_branch          default-branch
-                                          :created_at              (some-> created-at
+                                          :short-description-html  short-description-html
+                                          :default-branch          default-branch
+                                          :created-at              (some-> created-at
                                                                            instant/read-instant-date)
-                                          :updated_at              (some-> updated-at
+                                          :updated-at              (some-> updated-at
                                                                            instant/read-instant-date)
-                                          :fork_count              fork-count
-                                          :stargazer_count         stargazer-count
-                                          :contributor_count       contributor-count
-                                          :total_downloads         download-count
-                                          :is_mirror               is-mirror
-                                          :mirror_url              mirror_url
-                                          :is_archived             is-archived
-                                          :is_fork                 is-fork
-                                          :has_wiki_enabled        has-wiki-enabled
-                                          :is_locked               is-locked
+                                          :fork-count              fork-count
+                                          :stargazer-count         stargazer-count
+                                          :contributor-count       contributor-count
+                                          :total-downloads         download-count
+                                          :is-mirror               is-mirror
+                                          :mirror-url              mirror-url
+                                          :is-archived             is-archived
+                                          :is-fork                 is-fork
+                                          :has-wiki-enabled        has-wiki-enabled
+                                          :is-locked               is-locked
                                           :contributing            contributing
                                           :readme                  readme
-                                          :code_of_conduct         code-of-conduct
-                                          :issue_template          issue-template
-                                          :pull_request_template   pull-request-template
-                                          :documentation_health    metrics-health-percentage
-                                          :health_state_updated_at (some-> metrics-updated-at
+                                          :code-of-conduct         code-of-conduct
+                                          :issue-template          issue-template
+                                          :pull-request-template   pull-request-template
+                                          :documentation-health    metrics-health-percentage
+                                          :health-state-updated-at (some-> metrics-updated-at
                                                                            instant/read-instant-date)
-                                          :license_id              license-id}])
+                                          :license-id              license-id}])
                         (helpers/returning :id)
                         jw/sql-format))))
 
 
 (defn- prepare-issue
-  [repository-id {:keys [title created-at url closed closed-at] :as _issue}]
+  [repository-id {:as _issue :keys [title created-at url closed closed-at]}]
   {:id            (UUID/randomUUID)
    :title         title
-   :created_at    (some-> created-at
+   :created-at    (some-> created-at
                           instant/read-instant-date)
    :url           url
    :closed        closed
-   :closed_at     (some-> closed-at
+   :closed-at     (some-> closed-at
                           instant/read-instant-date)
-   :repository_id repository-id})
+   :repository-id repository-id})
 
 
 (defn- insert-issues!
@@ -91,25 +91,25 @@
 
 
 (defn insert-release!
-  [db repository-id {:keys [name tag-name created-at download-count] :as _release}]
+  [db repository-id {:as _release :keys [name tag-name created-at download-count]}]
   (jw/execute! db (-> (helpers/insert-into :release)
                       (helpers/values [{:id            (UUID/randomUUID)
                                         :name          name
-                                        :tag_name      tag-name
-                                        :created_at    (some-> created-at
+                                        :tag-name      tag-name
+                                        :created-at    (some-> created-at
                                                                instant/read-instant-date)
                                         :downloads     download-count
-                                        :repository_id repository-id}])
+                                        :repository-id repository-id}])
                       (helpers/returning :id)
                       jw/sql-format)))
 
 
 (defn- prepare-asset
-  [release-id {:keys [name download-count] :as _asset}]
+  [release-id {:as _asset :keys [name download-count]}]
   {:id         (UUID/randomUUID)
    :name       name
    :downloads  download-count
-   :release_id release-id})
+   :release-id release-id})
 
 
 (defn- insert-assets!
@@ -125,8 +125,8 @@
   [db repository-id releases]
   (when-not (empty? releases)
     (doall
-      (map (fn [{:keys [assets] :as release}]
-             (let [[{release-id :release/id}] (insert-release! db repository-id release)]
+      (map (fn [{:as release :keys [assets]}]
+             (let [[{release-id :id}] (insert-release! db repository-id release)]
                (insert-assets! db release-id assets)))
            releases))))
 
@@ -144,9 +144,9 @@
 
 (defn insert-repository-topic!
   [db repository-id topic-id]
-  (jw/execute! db (-> (helpers/insert-into :repository_topic)
-                      (helpers/values [{:repository_id repository-id
-                                        :topic_id      topic-id}])
+  (jw/execute! db (-> (helpers/insert-into :repository-topic)
+                      (helpers/values [{:repository-id repository-id
+                                        :topic-id      topic-id}])
                       jw/sql-format)))
 
 
@@ -155,13 +155,13 @@
   (when-not (empty? topics)
     (doall
       (map (fn [topic]
-             (let [[{topic-id :topic/id}] (insert-topic! db topic)]
+             (let [[{topic-id :id}] (insert-topic! db topic)]
                (insert-repository-topic! db repository-id topic-id)))
            topics))))
 
 
 (defn- insert-language!
-  [db {:keys [name color] :as _language}]
+  [db {:as _language :keys [name color]}]
   (jw/execute! db (-> (helpers/insert-into :language)
                       (helpers/values [{:id    (UUID/randomUUID)
                                         :name  name
@@ -174,20 +174,20 @@
 
 (defn- insert-repository-language!
   [db primary-language? size repository-id language-id]
-  (jw/execute! db (-> (helpers/insert-into :repository_language)
-                      (helpers/values [{:repository_id       repository-id
-                                        :language_id         language-id
+  (jw/execute! db (-> (helpers/insert-into :repository-language)
+                      (helpers/values [{:repository-id       repository-id
+                                        :language-id         language-id
                                         :size                size
-                                        :is_primary_language primary-language?}])
+                                        :is-primary-language primary-language?}])
                       jw/sql-format)))
 
 
 (defn- insert-languages!
-  [db repository-id {primary-language-name :name :as _primary-language} languages]
+  [db repository-id {:as _primary-language primary-language-name :name} languages]
   (when-not (empty? languages)
     (doall
       (map (fn [{:keys [name size] :as language}]
-             (let [[{language-id :language/id}] (insert-language! db language)
+             (let [[{language-id :id}] (insert-language! db language)
                    primary-language? (= name primary-language-name)]
                (insert-repository-language! db primary-language? size repository-id language-id)))
            languages))))
@@ -196,9 +196,9 @@
 (defn insert-repository-info!
   [db repository-info]
   (jw/with-transaction [tx db]
-    (let [[{license-id :license/id}] (some->> (:license-info repository-info)
-                                              (insert-license! tx))
-          [{repository-id :repository/id}] (insert-repository! tx license-id repository-info)]
+    (let [[{license-id :id}] (some->> (:license-info repository-info)
+                                      (insert-license! tx))
+          [{repository-id :id}] (insert-repository! tx license-id repository-info)]
       (insert-issues! tx repository-id (:issues repository-info))
       (insert-releases! tx repository-id (:releases repository-info))
       (insert-topics! tx repository-id (:topics repository-info))
@@ -222,19 +222,19 @@
 (defn select-repositories-base-info
   [db]
   (let [sql-map {:select [:repository/id :repository/owner :repository/name
-                          :repository/home_page :repository/default_branch
-                          :repository/created_at :repository/updated_at
-                          :repository/fork_count :repository/stargazer_count
-                          :repository/contributor_count :repository/total_downloads
-                          :repository/is_mirror :repository/mirror_url
-                          :repository/is_archived
-                          :repository/is_fork
-                          :repository/has_wiki_enabled
-                          :repository/is_locked :repository/lock_reason
-                          :repository/contributing  :repository/readme :repository/code_of_conduct
-                          :repository/issue_template :repository/pull_request_template
-                          :repository/documentation_health :repository/health_state_updated_at
-                          [:license/name :license-name] [:license/url :license-url] [:license/is_pseudo_license]]
+                          :repository/home-page :repository/default-branch
+                          :repository/created-at :repository/updated-at
+                          :repository/fork-count :repository/stargazer-count
+                          :repository/contributor-count :repository/total-downloads
+                          :repository/is-mirror :repository/mirror-url
+                          :repository/is-archived
+                          :repository/is-fork
+                          :repository/has-wiki-enabled
+                          :repository/is-locked :repository/lock-reason
+                          :repository/contributing  :repository/readme :repository/code-of-conduct
+                          :repository/issue-template :repository/pull-request-template
+                          :repository/documentation-health :repository/health-state-updated-at
+                          [:license/name :license-name] [:license/url :license-url] [:license/is-pseudo-license]]
                  :from [:repository]
                  :left-join [:license [:= :repository/license-id :license/id]]
                  :order-by [[:repository/owner :asc] [:repository/name :asc]]}]
