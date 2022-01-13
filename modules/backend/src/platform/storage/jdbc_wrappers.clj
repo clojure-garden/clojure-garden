@@ -54,5 +54,6 @@
 
 
 (defmacro with-transaction
-  [[sym transactable opts] & body]
-  `(jdbc/with-transaction [~sym ~transactable ~opts] ~@body))
+  {:arglists '([[sym transactable opts] & body])}
+  [& body]
+  `(jdbc/with-transaction ~@body))
