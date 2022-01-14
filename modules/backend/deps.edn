@@ -24,7 +24,7 @@
            clj-commons/clj-yaml                {:mvn/version "0.7.107"}
            aero/aero                           {:mvn/version "1.1.6"}
            clojure.java-time/clojure.java-time {:mvn/version "0.3.3"}
-           prismatic/schema                    {:mvn/version "1.2.0"}}
+           metosin/malli                       {:mvn/version "0.7.5"}}
 
  :aliases {:develop          {:extra-paths ["dev/src" "dev/resources"]
                               :extra-deps  {nrepl/nrepl    {:mvn/version "0.9.0"}
