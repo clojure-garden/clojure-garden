@@ -102,3 +102,17 @@
         (log/warn message)
         nil)
       (throw ex))))
+
+
+(defn update-if-contains
+  [m k f]
+  (if (contains? m k)
+    (update m k f)
+    m))
+
+
+(defn singleton->vector
+  [val]
+  (if (vector? val)
+    val
+    [val]))

@@ -6,13 +6,15 @@
     [platform.github.github-ctl :as dev-github-handlers]
     [platform.system.web.middleware.context :as middleware.context]
     [platform.system.web.middleware.cors :as middleware.cors]
+    [reitit.coercion.malli :as coercion.malli]
     [reitit.dev.pretty :as pretty]
     [reitit.middleware :as middleware]
     [reitit.ring :as ring]
+    [reitit.ring.coercion :as ring.coercion]
+    [reitit.ring.middleware.exception :as middleware.exception]
     [reitit.ring.middleware.muuntaja :as middleware.muuntaja]
     [reitit.ring.middleware.parameters :as middleware.parameters]
-    [ring.middleware.defaults :as middleware.defaults]
-    [ring.middleware.keyword-params :as middleware.keyword-params]))
+    [ring.middleware.defaults :as middleware.defaults]))
 
 
 (def muuntaja-opts
@@ -20,15 +22,29 @@
 
 
 (def default-opts
-  {:exception pretty/exception
+  {:exception         pretty/exception
    :injection-router? false
-   :injection-match? false
-   :data {:muuntaja (m/create muuntaja-opts)}})
+   :injection-match?  false
+   :data              {:muuntaja (m/create muuntaja-opts)}})
 
 
 (defn with-develop-opts
   [opts]
   opts)
+
+
+;; https://github.com/metosin/reitit/issues/249
+(defn exception-handler
+  [exception _ex _request]
+  {:status 500
+   :body (str "{\"type\": \"exception\", \"class\": \"" (.getName (.getClass exception)) "\"}")})
+
+
+(def exception-middleware
+  (middleware.exception/create-exception-middleware
+    (merge
+      middleware.exception/default-handlers
+      {::middleware.exception/wrap exception-handler})))
 
 
 (defn ring-handler
@@ -41,14 +57,40 @@
                      (assoc :session false))]
     (ring/ring-handler
       (ring/router
-        ["" {:middleware [[:wrap-defaults defaults]
-                          [:wrap-format]
+        ["" {:middleware [;; ring defaults
+                          [:wrap-defaults defaults]
+                          ;; query-params & form-params
                           [:wrap-parameters]
+                          ;; encoding response body
+                          [:wrap-format-response]
+                          ;; exception handling
+                          [:wrap-exception]
+                          ;; decoding request body
+                          [:wrap-format-request]
+                          ;; coercing response body
+                          ;; [:wrap-coerce-response]
+                          ;; coercing request parameters
+                          [:wrap-coerce-request]
+                          ;; cross-origin resource sharing headers
                           [:wrap-cors cors]]}
          ["/api"
-          ["/v1"
-           ["/github/repositories" {:middleware [[:wrap-context ctx]]
-                                    :get {:handler handlers/get-repository-info-all-handler}}]]]
+          ["/v1" {:middleware [[:wrap-context ctx]]}
+           ["/github/repositories" {:get {:coercion coercion.malli/coercion
+                                          :parameters {:query [:map
+                                                               [:per-page  {:optional true} pos-int?]
+                                                               [:page      {:optional true} pos-int?]
+                                                               [:with-meta {:optional true} boolean?]
+                                                               [:is-fork   {:optional true} boolean?]
+                                                               ;; https://github.com/metosin/reitit/issues/298
+                                                               ;; [:topics    {:optional true} vector?]
+                                                               ]}
+                                          :handler handlers/get-repositories-handler}}]
+           ["/github/topics"       {:get {:coercion coercion.malli/coercion
+                                          :parameters {:query [:map
+                                                               [:per-page  {:optional true} pos-int?]
+                                                               [:page      {:optional true} pos-int?]
+                                                               [:with-meta {:optional true} boolean?]]}
+                                          :handler handlers/get-topics-handler}}]]]
          ["/dev"
           ["/pull" {:middleware [[:wrap-context ctx]]}
            ["/github"  {:get {:handler dev-github-handlers/pull-repository-info-all-handler}}]
@@ -65,12 +107,16 @@
         (cond-> default-opts
           develop? with-develop-opts
           :always (assoc ::middleware/registry
-                         {:wrap-context        middleware.context/wrap-context
-                          :wrap-cors           middleware.cors/wrap-cors
-                          :wrap-defaults       middleware.defaults/wrap-defaults
-                          :wrap-format         middleware.muuntaja/format-middleware
-                          :wrap-keyword-params middleware.keyword-params/wrap-keyword-params
-                          :wrap-parameters     middleware.parameters/parameters-middleware})))
+                         {:wrap-context          middleware.context/wrap-context
+                          :wrap-cors             middleware.cors/wrap-cors
+                          :wrap-coerce-response  ring.coercion/coerce-response-middleware
+                          :wrap-coerce-request   ring.coercion/coerce-request-middleware
+                          :wrap-coerce-exception ring.coercion/coerce-exceptions-middleware
+                          :wrap-defaults         middleware.defaults/wrap-defaults
+                          :wrap-exception        exception-middleware
+                          :wrap-format-response  middleware.muuntaja/format-response-middleware
+                          :wrap-format-request   middleware.muuntaja/format-request-middleware
+                          :wrap-parameters       middleware.parameters/parameters-middleware})))
       (ring/routes
         (ring/redirect-trailing-slash-handler {:method :strip})
         (ring/create-default-handler))

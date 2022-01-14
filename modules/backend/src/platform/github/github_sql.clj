@@ -5,12 +5,14 @@
     [honey.sql.helpers :as helpers]
     [platform.storage.jdbc-wrappers :as jw])
   (:import
+    (com.zaxxer.hikari
+      HikariDataSource)
     (java.util
       UUID)))
 
 
 (defn- insert-license!
-  [db {:as _license :keys [name nickname url pseudo-license]}]
+  [^HikariDataSource db {:as _license :keys [name nickname url pseudo-license]}]
   (jw/execute! db (-> (helpers/insert-into :license)
                       (helpers/values [{:id                (UUID/randomUUID)
                                         :name              name
@@ -24,12 +26,12 @@
 
 
 (defn- insert-repository!
-  [db license-id {:as _repository :keys [name-with-owner homepage-url description
-                                         short-description-html default-branch
-                                         created-at updated-at fork-count stargazer-count
-                                         contributor-count download-count is-mirror mirror-url
-                                         is-archived is-fork has-wiki-enabled is-locked
-                                         doc-files metrics]}]
+  [^HikariDataSource db license-id {:as _repository :keys [name-with-owner homepage-url description
+                                                           short-description-html default-branch
+                                                           created-at updated-at fork-count stargazer-count
+                                                           contributor-count download-count is-mirror mirror-url
+                                                           is-archived is-fork has-wiki-enabled is-locked
+                                                           doc-files metrics]}]
   (let [[owner name] (str/split name-with-owner #"/")
         {:keys [readme contributing code-of-conduct issue-template pull-request-template]} doc-files
         {metrics-health-percentage :health-percentage metrics-updated-at :updated-at} metrics]
@@ -82,7 +84,7 @@
 
 
 (defn- insert-issues!
-  [db repository-id issues]
+  [^HikariDataSource db repository-id issues]
   (let [prepared-issues (mapv #(prepare-issue repository-id %) issues)]
     (when-not (empty? prepared-issues)
       (jw/execute! db (-> (helpers/insert-into :issue)
@@ -91,7 +93,7 @@
 
 
 (defn insert-release!
-  [db repository-id {:as _release :keys [name tag-name created-at download-count]}]
+  [^HikariDataSource db repository-id {:as _release :keys [name tag-name created-at download-count]}]
   (jw/execute! db (-> (helpers/insert-into :release)
                       (helpers/values [{:id            (UUID/randomUUID)
                                         :name          name
@@ -113,7 +115,7 @@
 
 
 (defn- insert-assets!
-  [db release-id assets]
+  [^HikariDataSource db release-id assets]
   (let [prepared-assets (mapv #(prepare-asset release-id %) assets)]
     (when-not (empty? prepared-assets)
       (jw/execute! db (-> (helpers/insert-into :asset)
@@ -122,7 +124,7 @@
 
 
 (defn- insert-releases!
-  [db repository-id releases]
+  [^HikariDataSource db repository-id releases]
   (when-not (empty? releases)
     (doall
       (map (fn [{:as release :keys [assets]}]
@@ -132,7 +134,7 @@
 
 
 (defn insert-topic!
-  [db topic-name]
+  [^HikariDataSource db topic-name]
   (jw/execute! db (-> (helpers/insert-into :topic)
                       (helpers/values [{:id   (UUID/randomUUID)
                                         :name topic-name}])
@@ -143,7 +145,7 @@
 
 
 (defn insert-repository-topic!
-  [db repository-id topic-id]
+  [^HikariDataSource db repository-id topic-id]
   (jw/execute! db (-> (helpers/insert-into :repository-topic)
                       (helpers/values [{:repository-id repository-id
                                         :topic-id      topic-id}])
@@ -151,7 +153,7 @@
 
 
 (defn- insert-topics!
-  [db repository-id topics]
+  [^HikariDataSource db repository-id topics]
   (when-not (empty? topics)
     (doall
       (map (fn [topic]
@@ -161,7 +163,7 @@
 
 
 (defn- insert-language!
-  [db {:as _language :keys [name color]}]
+  [^HikariDataSource db {:as _language :keys [name color]}]
   (jw/execute! db (-> (helpers/insert-into :language)
                       (helpers/values [{:id    (UUID/randomUUID)
                                         :name  name
@@ -173,7 +175,7 @@
 
 
 (defn- insert-repository-language!
-  [db primary-language? size repository-id language-id]
+  [^HikariDataSource db primary-language? size repository-id language-id]
   (jw/execute! db (-> (helpers/insert-into :repository-language)
                       (helpers/values [{:repository-id       repository-id
                                         :language-id         language-id
@@ -183,7 +185,7 @@
 
 
 (defn- insert-languages!
-  [db repository-id {:as _primary-language primary-language-name :name} languages]
+  [^HikariDataSource db repository-id {:as _primary-language primary-language-name :name} languages]
   (when-not (empty? languages)
     (doall
       (map (fn [{:keys [name size] :as language}]
@@ -194,7 +196,7 @@
 
 
 (defn insert-repository-info!
-  [db repository-info]
+  [^HikariDataSource db repository-info]
   (jw/with-transaction [tx db]
     (let [[{license-id :id}] (some->> (:license-info repository-info)
                                       (insert-license! tx))
@@ -208,7 +210,7 @@
 
 
 (defn repository-exists?
-  [db owner name]
+  [^HikariDataSource db owner name]
   (let [sqlmap {:select [1]
                 :from   [:repository]
                 :where  [:and
@@ -219,31 +221,86 @@
          (boolean))))
 
 
-(defn select-repositories-base-info
-  [db]
-  (let [sql-map {:select [:repository/id :repository/owner :repository/name
-                          :repository/home-page :repository/default-branch
-                          :repository/created-at :repository/updated-at
-                          :repository/fork-count :repository/stargazer-count
-                          :repository/contributor-count :repository/total-downloads
-                          :repository/is-mirror :repository/mirror-url
-                          :repository/is-archived
-                          :repository/is-fork
-                          :repository/has-wiki-enabled
-                          :repository/is-locked :repository/lock-reason
-                          :repository/contributing  :repository/readme :repository/code-of-conduct
-                          :repository/issue-template :repository/pull-request-template
-                          :repository/documentation-health :repository/health-state-updated-at
-                          [:license/name :license-name] [:license/url :license-url] [:license/is-pseudo-license]]
-                 :from [:repository]
-                 :left-join [:license [:= :repository/license-id :license/id]]
-                 :order-by [[:repository/owner :asc] [:repository/name :asc]]}]
-    (->> (jw/sql-format sql-map)
-         (jw/execute! db))))
+(defn select-repositories
+  ([^HikariDataSource db]
+   (select-repositories db nil nil nil))
+  ([db filters]
+   (select-repositories db filters nil nil))
+  ([db {:as _filters :keys [topics]} limit offset]
+   (let [sql-map {:select (if offset [:*] [[:%count.* :aggregate]])
+                  :from [[(cond-> {:select-distinct [:repository/id
+                                                     :repository/owner
+                                                     :repository/name
+                                                     :repository/home-page
+                                                     :repository/default-branch
+                                                     :repository/created-at
+                                                     :repository/updated-at
+                                                     :repository/fork-count
+                                                     :repository/stargazer-count
+                                                     :repository/contributor-count
+                                                     :repository/total-downloads
+                                                     :repository/is-mirror
+                                                     :repository/mirror-url
+                                                     :repository/is-archived
+                                                     :repository/is-fork
+                                                     :repository/has-wiki-enabled
+                                                     :repository/is-locked
+                                                     :repository/lock-reason
+                                                     :repository/contributing
+                                                     :repository/readme :repository/code-of-conduct
+                                                     :repository/issue-template
+                                                     :repository/pull-request-template
+                                                     :repository/documentation-health
+                                                     :repository/health-state-updated-at
+                                                     [:license/name :license-name]
+                                                     [:license/url :license-url]
+                                                     [:license/is-pseudo-license]]
+                                   :from            [:repository]
+                                   :left-join       [:license [:= :repository/license-id :license/id]]}
+                            topics (merge {:join  [[:repository-topic :rt] [:= :repository/id :rt/repository-id]
+                                                   :topic                 [:= :rt/topic-id :topic/id]]
+                                           :where [:in :topic/name topics]})
+                            :always (merge {:order-by [[:repository/owner :asc]
+                                                       [:repository/name :asc]]})
+                            (and limit offset) (merge {:limit limit
+                                                       :offset offset})) :repositories]]}]
+     (->> (jw/sql-format sql-map)
+          (jw/execute! db)))))
 
 
-(defn select-repository-topics
-  [db repository-id]
+(defn select-repository-issues
+  ([^HikariDataSource db repository-id]
+   (select-repository-issues db repository-id nil nil))
+  ([^HikariDataSource db repository-id offset limit]
+   (let [sql-map (cond-> {:select    [:issue/id :issue/title :issue/created-at
+                                      :issue/url :issue/closed :issue/closed-at]
+                          :from      [:issue]
+                          :where     [:= :issue/repository-id repository-id]
+                          :order-by  [[:issue/created-at :asc]]}
+                   (and limit offset) (merge {:limit limit
+                                              :offset offset}))]
+     (->> (jw/sql-format sql-map)
+          (jw/execute! db)))))
+
+
+(defn select-topics
+  ([^HikariDataSource db]
+   (select-topics db nil nil))
+  ([^HikariDataSource db limit offset]
+   (let [sql-map {:select (if offset [:*] [[:%count.* :aggregate]])
+                  :from [[(cond-> {:select    [:topic/name [:%count.rt/repository-id :repository_count]]
+                                   :from      [:topic]
+                                   :left-join [[:repository-topic :rt] [:= :topic/id :rt/topic-id]]
+                                   :group-by  [:topic/name]
+                                   :order-by  [[:topic/name :asc]]}
+                            (and limit offset) (merge {:limit limit
+                                                       :offset offset})) :topics]]}]
+     (->> (jw/sql-format sql-map)
+          (jw/execute! db)))))
+
+
+(defn select-topics-by-id
+  [^HikariDataSource db repository-id]
   (let [sql-map {:select    [[:topic/name :name]]
                  :from      [:repository-topic]
                  :left-join [:topic [:= :repository-topic/topic-id :topic/id]]
@@ -253,8 +310,8 @@
          (jw/execute! db))))
 
 
-(defn select-repository-languages
-  [db repository-id]
+(defn select-languages-by-id
+  [^HikariDataSource db repository-id]
   (let [sql-map {:select    [[:language/name :name]
                              [:language/color :color]
                              [:repository-language/size :size]
@@ -265,24 +322,3 @@
                  :order-by  [[:language/name :asc]]}]
     (->> (jw/sql-format sql-map)
          (jw/execute! db))))
-
-
-(defn select-repository-issues
-  [db repository-id]
-  (let [sql-map {:select    [:issue/id :issue/title :issue/created-at
-                             :issue/url :issue/closed :issue/closed-at]
-                 :from      [:issue]
-                 :where     [:= :issue/repository-id repository-id]
-                 :order-by  [[:issue/created-at :asc]]}]
-    (->> (jw/sql-format sql-map)
-         (jw/execute! db))))
-
-
-(defn select-repositories
-  [db]
-  (let [base-info (select-repositories-base-info db)]
-    (mapv (fn [{:as base-info :keys [id]}]
-            (assoc base-info
-                   :languages (select-repository-languages db id)
-                   :topics (select-repository-topics db id)))
-          base-info)))

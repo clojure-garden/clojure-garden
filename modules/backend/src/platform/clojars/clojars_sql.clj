@@ -3,13 +3,15 @@
     [honey.sql.helpers :as helpers]
     [platform.storage.jdbc-wrappers :as jw])
   (:import
+    (com.zaxxer.hikari
+      HikariDataSource)
     (java.util
       UUID)))
 
 
 (defn- insert-artifact!
-  [db {:as _artifact :keys [artifact-id group-id homepage description owner
-                            latest-version latest-release downloads from-clojars]}]
+  [^HikariDataSource db {:as _artifact :keys [artifact-id group-id homepage description owner
+                                              latest-version latest-release downloads from-clojars]}]
   (jw/execute! db (-> (helpers/insert-into :artifact)
                       (helpers/values [{:id             (UUID/randomUUID)
                                         :artifact-id    artifact-id
@@ -26,7 +28,7 @@
 
 
 (defn- insert-license!
-  [db {:as _license :keys [name url]}]
+  [^HikariDataSource db {:as _license :keys [name url]}]
   (jw/execute! db (-> (helpers/insert-into :license)
                       (helpers/values [{:id   (UUID/randomUUID)
                                         :name name
@@ -38,7 +40,7 @@
 
 
 (defn- insert-version-license!
-  [db version-id license-id]
+  [^HikariDataSource db version-id license-id]
   (jw/execute! db (-> (helpers/insert-into :version-license)
                       (helpers/values [{:version-id version-id
                                         :license-id license-id}])
@@ -46,7 +48,7 @@
 
 
 (defn- insert-licenses!
-  [db version-id licenses]
+  [^HikariDataSource db version-id licenses]
   (when-not (empty? licenses)
     (doall
       (map (fn [license]
@@ -56,7 +58,7 @@
 
 
 (defn- insert-version!
-  [db artifact-id {:as _artifact-version :keys [version downloads]}]
+  [^HikariDataSource db artifact-id {:as _artifact-version :keys [version downloads]}]
   (jw/execute! db (-> (helpers/insert-into :version)
                       (helpers/values [{:id          (UUID/randomUUID)
                                         :name        version
@@ -67,20 +69,20 @@
 
 
 (defn- insert-version-info!
-  [db artifact-id {:as version-info :keys [licenses]}]
+  [^HikariDataSource db artifact-id {:as version-info :keys [licenses]}]
   (let [[{version-id :id}] (insert-version! db artifact-id version-info)]
     (insert-licenses! db version-id licenses)))
 
 
 (defn- insert-versions!
-  [db artifact-id versions]
+  [^HikariDataSource db artifact-id versions]
   (when-not (empty? versions)
     (doall
       (map #(insert-version-info! db artifact-id %) versions))))
 
 
 (defn insert-artifact-info!
-  [db artifact-info from-clojars]
+  [^HikariDataSource db artifact-info from-clojars]
   (jw/with-transaction [tx db]
     (let [artifact-info (conj artifact-info [:from-clojars from-clojars])
           [{artifact-id :id}] (insert-artifact! tx artifact-info)]
@@ -88,7 +90,7 @@
 
 
 (defn artifact-exists?
-  [db group-id artifact-id]
+  [^HikariDataSource db group-id artifact-id]
   (let [sqlmap {:select [1]
                 :from   [:artifact]
                 :where  [:and
@@ -100,7 +102,7 @@
 
 
 (defn get-github-urls
-  [db]
+  [^HikariDataSource db]
   (let [sqlmap {:select [:homepage]
                 :from   [:artifact]
                 :where  [:like :homepage "%github%"]}]
