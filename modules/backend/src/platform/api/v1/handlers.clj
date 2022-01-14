@@ -11,7 +11,7 @@
   (let [datasource       (get-in req [:platform.system/ctx :db :datasource])
         query            (get-in req [:parameters :query])
         filters          (-> (select-keys params [:topics :is-fork])
-                             (common/update-if-contains :topics common/singleton->vector))
+                             (common/update-if-contains :topics common/ensure-coll))
         current-page     (get query :page 1)
         per-page         (get query :per-page 50)
         with-meta        (get query :with-meta)

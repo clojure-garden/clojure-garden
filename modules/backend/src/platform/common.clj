@@ -111,8 +111,8 @@
     m))
 
 
-(defn singleton->vector
-  [val]
-  (if (vector? val)
-    val
-    [val]))
+(defn ensure-coll
+  [x]
+  (if (sequential? x)
+    x
+    [x]))
