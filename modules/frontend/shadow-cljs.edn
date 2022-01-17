@@ -11,7 +11,8 @@
                    platform.ui.config/git-branch       #shadow/env "GIT_BRANCH"
                    platform.ui.config/git-sha          #shadow/env "GIT_SHA"
                    platform.ui.config/logger-level     "error"
-                   platform.ui.config/default-language "en"}
+                   platform.ui.config/default-language "en"
+                   platform.ui.config/backend-api-url  "https://clojure.garden:8443/api/v1"}
 
                   :compiler-options
                   {:output-feature-set :es2018}}
@@ -31,7 +32,8 @@
 
                          :dev        {:compiler-options {:closure-defines {re-frame.trace/trace-enabled?        true
                                                                            day8.re-frame.tracing/trace-enabled? true
-                                                                           platform.ui.config/logger-level      "trace"}}}
+                                                                           platform.ui.config/logger-level      "trace"
+                                                                           platform.ui.config/backend-api-url   "http://localhost:8080/api/v1"}}}
 
                          :release    {}}
 
@@ -43,7 +45,8 @@
 
                          :dev      {:compiler-options {:closure-defines {re-frame.trace/trace-enabled?        true
                                                                          day8.re-frame.tracing/trace-enabled? true
-                                                                         platform.ui.config/logger-level      "trace"}}}}
+                                                                         platform.ui.config/logger-level      "trace"
+                                                                         platform.ui.config/backend-api-url   "http://localhost:8080/api/v1"}}}}
 
                   :ci   {:target    :karma
                          :output-to "public/test/assets/ci.js"}}}
