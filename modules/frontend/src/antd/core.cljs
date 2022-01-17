@@ -2,6 +2,8 @@
   (:require
     ["antd/es/avatar" :default antd.avatar]
     ["antd/es/badge" :default antd.badge]
+    ["antd/es/card" :default antd.card]
+    ["antd/es/col" :default antd.col]
     ["antd/es/config-provider" :default antd.config-provider]
     ["antd/es/divider" :default antd.divider]
     ["antd/es/dropdown" :default antd.dropdown]
@@ -11,18 +13,12 @@
     ["antd/es/menu" :default antd.menu]
     ["antd/es/notification" :default antd.notification]
     ["antd/es/page-header" :default antd.page-header]
+    ["antd/es/row" :default antd.row]
+    ["antd/es/select" :default antd.select]
     ["antd/es/space" :default antd.space]
     ["antd/es/spin" :default antd.spin]
     ["antd/es/typography" :default antd.typography]
     [reagent.core :as r]))
-
-
-;;
-;; Locale
-;;
-
-(def config-provider (r/adapt-react-class antd.config-provider))
-
 
 
 ;;
@@ -38,6 +34,32 @@
 ;;
 
 (def badge (r/adapt-react-class antd.badge))
+
+
+
+;;
+;; Card
+;;
+
+(def card (r/adapt-react-class antd.card))
+(def card-grid (r/adapt-react-class (.-Grid antd.card)))
+(def card-meta (r/adapt-react-class (.-Meta antd.card)))
+
+
+
+;;
+;; Col
+;;
+
+(def col (r/adapt-react-class antd.col))
+
+
+
+;;
+;; Locale
+;;
+
+(def config-provider (r/adapt-react-class antd.config-provider))
 
 
 
@@ -120,6 +142,14 @@
 
 
 ;;
+;; Row
+;;
+
+(def row (r/adapt-react-class antd.row))
+
+
+
+;;
 ;; Menu
 ;;
 
@@ -128,6 +158,16 @@
 (def menu-item (r/adapt-react-class (.-Item antd.menu)))
 (def menu-item-group (r/adapt-react-class (.-ItemGroup antd.menu)))
 (def menu-sub-menu (r/adapt-react-class (.-SubMenu antd.menu)))
+
+
+
+;;
+;; Select
+;;
+
+(def select (r/adapt-react-class antd.select))
+(def select-opt-group (r/adapt-react-class (.-OptGroup antd.select)))
+(def select-option (r/adapt-react-class (.-Option antd.select)))
 
 
 
