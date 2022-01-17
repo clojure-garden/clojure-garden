@@ -27,3 +27,11 @@
 ;;
 
 (goog-define default-language "en")
+
+
+
+;;
+;; Backend API
+;;
+
+(goog-define backend-api-url "http://localhost:8080/api/v1")

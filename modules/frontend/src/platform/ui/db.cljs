@@ -22,6 +22,7 @@
                                         :git-url         config/git-url
                                         :git-branch      config/git-branch
                                         :git-sha         config/git-sha}}
+                  :api  {:backend-api-url config/backend-api-url}
                   :i18n {:languages (->> :tongue/fallback
                                          (dissoc translates/dictionaries)
                                          (keys)
