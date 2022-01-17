@@ -55,7 +55,7 @@
   [:div {:class "header-menu"}
    [logotype]
    [nav]
-   [user]])
+   #_[user]])
 
 
 (defn footer
