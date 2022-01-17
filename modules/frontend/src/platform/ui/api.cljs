@@ -69,11 +69,9 @@
   :github/repositories-tags
   :<- [:github/repositories]
   (fn [repositories]
-    (js/console.log :repositories repositories)
     (->> repositories
          (reduce
            (fn [acc {:keys [topics]}]
-             (js/console.log :topics topics)
              (into acc topics))
            #{})
          (sort))))
