@@ -13,7 +13,9 @@
   [""
    ["/" {:name :page/landing, :private false}]
    ["/dashboard"
-    ["" {:name :page/dashboard, :private false}]]])
+    ["" {:name        :page/dashboard
+         :private     false
+         :controllers [{:start #(rf/dispatch [:api/fetch-github-repositories])}]}]]])
 
 
 (def router
