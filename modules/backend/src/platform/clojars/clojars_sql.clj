@@ -110,3 +110,19 @@
          (jw/execute! db)
          (mapv :homepage))))
 
+
+(defn select-downloads-by-homepage
+  [^HikariDataSource db {:keys [owner name]}]
+  (let [homepage (format "%s/%s" owner name)
+        sqlmap {:select [:downloads]
+                :from   [:artifact]
+                :where  [:or
+                         [:like :artifact/homepage (str "%" homepage "%")]
+                         [:and
+                          [:like :artifact/artifact-id name]
+                          [:like :artifact/group-id owner]]]}]
+    (prn homepage)
+    (->> (jw/sql-format sqlmap)
+         (jw/execute-one! db)
+         (:downloads))))
+

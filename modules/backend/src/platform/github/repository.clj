@@ -1,5 +1,6 @@
 (ns platform.github.repository
   (:require
+    [platform.clojars.clojars-sql :as clojars-sql]
     [platform.common :as common]
     [platform.github.github-sql :as github-sql]))
 
@@ -33,12 +34,16 @@
 (defn get-repositories
   [datasource filters limit offset]
   (let [repositories (github-sql/select-repositories datasource filters limit offset)]
-    (mapv (fn [{:as repository :keys [id]}]
+    (mapv (fn [{:as repository :keys [id owner name]}]
             (let [languages (-> (github-sql/select-languages-by-id datasource id)
                                 (transform-languages))
                   topics    (-> (github-sql/select-topics-by-id datasource id)
-                                (transform-topics))]
-              (merge repository {:languages languages :topics topics})))
+                                (transform-topics))
+                  clojars-downloads (->> {:owner owner :name name}
+                                         (clojars-sql/select-downloads-by-homepage datasource))]
+              (cond-> repository
+                clojars-downloads (update :total-downloads +' clojars-downloads)
+                :always           (merge {:languages languages :topics topics}))))
           repositories)))
 
 
