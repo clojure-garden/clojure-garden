@@ -232,6 +232,7 @@
                                                      :repository/owner
                                                      :repository/name
                                                      :repository/home-page
+                                                     :repository/description
                                                      :repository/default-branch
                                                      :repository/created-at
                                                      :repository/updated-at
@@ -259,7 +260,9 @@
                                    :left-join       [:license [:= :repository/license-id :license/id]]}
                             topics (merge {:join  [[:repository-topic :rt] [:= :repository/id :rt/repository-id]
                                                    :topic                 [:= :rt/topic-id :topic/id]]
-                                           :where [:in :topic/name topics]})
+                                           :where [:and
+                                                   [:in :topic/name topics]
+                                                   [:= :repository/is-fork false]]})
                             :always (merge {:order-by [[:repository/owner :asc]
                                                        [:repository/name :asc]]})
                             (and limit offset) (merge {:limit limit
