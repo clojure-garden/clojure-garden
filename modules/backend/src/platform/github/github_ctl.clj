@@ -6,8 +6,7 @@
     [platform.github.api-client :as github-client]
     [platform.github.github-sql :as github-sql]
     [platform.utils.seeder :as seeder]
-    [platform.utils.tagger :as tagger]
-    [ring.util.response :as resp])
+    [platform.utils.tagger :as tagger])
   (:import
     (clojure.lang
       ExceptionInfo)))
@@ -47,7 +46,7 @@
            {:keys [url]} :params} req]
       (->> (tagger/read-clojure-toolbox-data)
            (pull-repository-info datasource url))))
-  (resp/redirect "/status"))
+  {:status 202})
 
 
 (defn pull-repository-info-all-handler
@@ -62,4 +61,4 @@
                     (pull-repository-info datasource url project-tags)
                     (Thread/sleep 10000))
                   project-urls))))
-  (resp/redirect "/status"))
+  {:status 202})
