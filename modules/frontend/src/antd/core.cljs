@@ -13,12 +13,21 @@
     ["antd/es/menu" :default antd.menu]
     ["antd/es/notification" :default antd.notification]
     ["antd/es/page-header" :default antd.page-header]
+    ["antd/es/pagination" :default antd.pagination]
     ["antd/es/row" :default antd.row]
     ["antd/es/select" :default antd.select]
     ["antd/es/space" :default antd.space]
     ["antd/es/spin" :default antd.spin]
+    ["antd/es/tag" :default antd.tag]
     ["antd/es/typography" :default antd.typography]
     [reagent.core :as r]))
+
+
+;;
+;; Tag
+;;
+
+(def tag (r/adapt-react-class antd.tag))
 
 
 ;;
@@ -169,6 +178,12 @@
 (def select-opt-group (r/adapt-react-class (.-OptGroup antd.select)))
 (def select-option (r/adapt-react-class (.-Option antd.select)))
 
+
+;;
+;; Pagination
+;;
+
+(def pagination (r/adapt-react-class antd.pagination))
 
 
 ;;

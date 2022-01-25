@@ -2,21 +2,74 @@
   (:require
     [antd.core :as antd]
     [platform.ui.components :as components]
-    [platform.ui.utils.string :refer [format]]
-    [re-frame.core :as rf]))
+    [platform.ui.utils.string :refer [format date-to-string]]
+    [re-frame.core :as rf]
+    [reagent.core :as r]))
+
+
+;; (defn repositories-list
+;;  [repositories]
+;;  (-> (into [:div {:style {:margin-top "20px"}}]
+;;            (for [repos (partition-all 4 repositories)]
+;;              (into [antd/row {:gutter 2}]
+;;                    (for [{:keys [name owner]} repos]
+;;                      (let [description (format "%s/%s" owner name)]
+;;                        [antd/col {:span 6}
+;;                         [antd/card
+;;                          [antd/card-meta
+;;                           {:description description}]]])))))
+;;      (conj [antd/pagination {:default-current 1 :total 50}])))
 
 
 (defn repositories-list
-  [repositories]
-  (into [:div {:style {:margin-top "20px"}}]
-        (for [repos (partition-all 4 repositories)]
-          (into [antd/row {:gutter 2}]
-                (for [{:keys [name owner]} repos]
-                  (let [description (format "%s/%s" owner name)]
-                    [antd/col {:span 6}
-                     [antd/card
-                      [antd/card-meta
-                       {:description description}]]]))))))
+  [repositories {:as _pagination :keys [total-count]}]
+  (-> [:div {:style {:margin-top "20px"}}
+       (into [antd/row {:gutter [12 12]}]
+             (for [repos (partition-all 4 repositories)]
+
+               (for [{:keys [owner name description license-name license-url
+                             stargazer-count contributor-count fork-count topics
+                             total-downloads updated-at]} repos]
+                 (let [title (format "%s/%s \uD83C\uDF31" owner name)
+                       description (-> (or description "No description")
+                                       (clojure.string/capitalize)
+                                       (clojure.string/replace #"(?:\.|!|\?)$" ""))
+                       license-name (or license-name "Unknown License")
+                       updated-at (date-to-string updated-at)
+                       github-link (format "https://github.com/%s/%s" owner name)]
+                   [antd/col {:span 6 :class-name "gutter-row"}
+                    [antd/card {:title title
+                                :extra (r/as-element [antd/typography-link {:href github-link
+                                                                            :target "_blank"} "More"])
+                                :style {:height "100%"}}
+                     [antd/space {:direction "vertical" :align "baseline"}
+                      [antd/typography-paragraph {:type "secondary"
+                                                  :ellipsis {:expandable false
+                                                             :rows 2}} description]
+                      [antd/space {:direction "horizontal"}
+                       (when-not (some #{"clj" "clojure" "cljs" "clojurescript"} topics)
+                         [antd/tag {:color "yellow"} "not specified"])
+                       (when (some #{"clj" "clojure"} topics)
+                         [antd/tag {:color "blue"} "clj"])
+                       (when (some #{"cljs" "clojurescript"} topics)
+                         [antd/tag {:color "red"} "cljs"])]
+                      [antd/space {:direction "horizontal"}
+                       [antd/typography-text stargazer-count]
+                       [antd.icons/star-outlined]
+                       [antd/typography-text contributor-count]
+                       [antd.icons/team-outlined]
+                       [antd/typography-text fork-count]
+                       [antd.icons/fork-outlined]
+                       [antd/typography-text total-downloads]
+                       [antd.icons/download-outlined]
+                       [antd/typography-text updated-at]
+                       [antd.icons/format-painter-outlined]]
+                      [antd/typography-link {:href license-url :target "_blank"} license-name]]]]))))]
+      (conj [:div {:style {:margin-top "20px"}}
+             [antd/pagination {:defaultCurrent 1
+                               :defaultPageSize 20
+                               :onChange #(rf/dispatch [:github/fetch-repositories-by-tag {:page %1 :page-size %2}])
+                               :total (or total-count 0)}]])))
 
 
 (defn select-tags
@@ -33,15 +86,16 @@
 
 (defn content
   []
-  (let [tags          @(rf/subscribe [:github/repositories-tags])
-        selected-tags @(rf/subscribe [:github/selected-tags])
-        repositories  @(rf/subscribe [:github/repositories-by-tags])]
+  (let [tags                    @(rf/subscribe [:github/topics])
+        selected-tags           @(rf/subscribe [:github/selected-tags])
+        repositories            @(rf/subscribe [:github/repositories])
+        pagination              @(rf/subscribe [:github/pagination])]
     [antd/layout-content {:style {:margin-top "20px"}}
      [antd/row
       [antd/col {:span   20
                  :offset 2}
        [select-tags tags selected-tags]
-       [repositories-list repositories]]]]))
+       [repositories-list repositories pagination]]]]))
 
 
 (defn page

@@ -15,9 +15,10 @@
    ["/dashboard"
     ["" {:name        :page/dashboard
          :private     false
-         :controllers [{:start #(rf/dispatch [:api/fetch-github-repositories])}]}]]])
+         :controllers [{:start #(rf/dispatch [:api/fetch-github-topics])}]}]]])
 
 
+;; :api/fetch-github-repositories
 (def router
   (rfr/router
     routes
