@@ -7,20 +7,6 @@
     [reagent.core :as r]))
 
 
-;; (defn repositories-list
-;;  [repositories]
-;;  (-> (into [:div {:style {:margin-top "20px"}}]
-;;            (for [repos (partition-all 4 repositories)]
-;;              (into [antd/row {:gutter 2}]
-;;                    (for [{:keys [name owner]} repos]
-;;                      (let [description (format "%s/%s" owner name)]
-;;                        [antd/col {:span 6}
-;;                         [antd/card
-;;                          [antd/card-meta
-;;                           {:description description}]]])))))
-;;      (conj [antd/pagination {:default-current 1 :total 50}])))
-
-
 (defn repositories-list
   [repositories {:as _pagination :keys [total-count]}]
   (-> [:div {:style {:margin-top "20px"}}
@@ -54,16 +40,16 @@
                        (when (some #{"cljs" "clojurescript"} topics)
                          [antd/tag {:color "red"} "cljs"])]
                       [antd/space {:direction "horizontal"}
-                       [antd/typography-text stargazer-count]
                        [antd.icons/star-outlined]
-                       [antd/typography-text contributor-count]
+                       [antd/typography-text stargazer-count]
                        [antd.icons/team-outlined]
-                       [antd/typography-text fork-count]
+                       [antd/typography-text contributor-count]
                        [antd.icons/fork-outlined]
-                       [antd/typography-text total-downloads]
+                       [antd/typography-text fork-count]
                        [antd.icons/download-outlined]
-                       [antd/typography-text updated-at]
-                       [antd.icons/format-painter-outlined]]
+                       [antd/typography-text total-downloads]
+                       [antd.icons/format-painter-outlined]
+                       [antd/typography-text updated-at]]
                       [antd/typography-link {:href license-url :target "_blank"} license-name]]]]))))]
       (conj [:div {:style {:margin-top "20px"}}
              [antd/pagination {:defaultCurrent 1
