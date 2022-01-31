@@ -121,8 +121,6 @@
                          [:and
                           [:like :artifact/artifact-id name]
                           [:like :artifact/group-id owner]]]}]
-    (prn homepage)
     (->> (jw/sql-format sqlmap)
          (jw/execute-one! db)
          (:downloads))))
-
