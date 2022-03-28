@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS artifact (
+CREATE TABLE IF NOT EXISTS library (
 	id                UUID,
 	artifact_id       VARCHAR NOT NULL,
 	group_id          VARCHAR NOT NULL,
@@ -10,5 +10,5 @@ CREATE TABLE IF NOT EXISTS artifact (
   downloads         BIGINT NOT NULL DEFAULT 0,
   from_clojars      BOOLEAN NOT NULL,
 	PRIMARY KEY (id),
-	UNIQUE(artifact_id, group_id)
+	UNIQUE      (artifact_id, group_id)
 );

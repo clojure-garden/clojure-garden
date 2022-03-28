@@ -4,5 +4,5 @@ CREATE TABLE IF NOT EXISTS license (
 	nick_name         VARCHAR UNIQUE,
 	url               TEXT,
 	is_pseudo_license BOOLEAN,
-	PRIMARY KEY (id)
+	PRIMARY KEY       (id)
 );

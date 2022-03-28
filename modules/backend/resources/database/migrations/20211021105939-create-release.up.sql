@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS release (
 	created_at    TIMESTAMP,
 	downloads     BIGINT DEFAULT 0,
 	repository_id UUID NOT NULL,
-	PRIMARY KEY (id),
-	FOREIGN KEY (repository_id) REFERENCES repository(id),
-	UNIQUE(tag_name, repository_id)
+	PRIMARY KEY   (id),
+	FOREIGN KEY   (repository_id) REFERENCES repository(id),
+	UNIQUE        (tag_name, repository_id)
 );

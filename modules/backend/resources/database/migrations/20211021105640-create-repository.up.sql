@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS repository (
     documentation_health    DECIMAL(5,2),
     health_state_updated_at TIMESTAMP,
     license_id              UUID,
-    PRIMARY KEY (id),
-    FOREIGN KEY (license_id) REFERENCES license(id),
-    UNIQUE(owner, name)
+    PRIMARY KEY             (id),
+    FOREIGN KEY             (license_id) REFERENCES license(id),
+    UNIQUE                  (owner, name)
 );

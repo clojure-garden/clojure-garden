@@ -6,6 +6,6 @@ CREATE TABLE IF NOT EXISTS issue (
     closed        BOOLEAN NOT NULL,
     closed_at     TIMESTAMP,
     repository_id UUID NOT NULL,
-    PRIMARY KEY (id),
-    FOREIGN KEY (repository_id) REFERENCES repository(id)
+    PRIMARY KEY   (id),
+    FOREIGN KEY   (repository_id) REFERENCES repository(id)
 );
