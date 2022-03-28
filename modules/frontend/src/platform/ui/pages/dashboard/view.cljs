@@ -13,9 +13,9 @@
        (into [antd/row {:gutter [12 12]}]
              (for [repos (partition-all 4 repositories)]
 
-               (for [{:keys [owner name description license-name license-url
-                             stargazer-count contributor-count fork-count topics
-                             total-downloads updated-at]} repos]
+               (for [{:as repo  :keys [owner name description license-name license-url
+                                       stargazer-count contributor-count fork-count topics
+                                       total-downloads updated-at]} repos]
                  (let [title (format "%s/%s \uD83C\uDF31" owner name)
                        description (-> (or description "No description")
                                        (clojure.string/capitalize)
@@ -48,6 +48,10 @@
                        [antd/typography-text fork-count]
                        [antd.icons/download-outlined]
                        [antd/typography-text total-downloads]
+                       [antd.icons/twitter-outlined]
+                       [antd/typography-text (get :twitter-mentions repo 0)]
+                       [antd.icons/slack-outlined]
+                       [antd/typography-text (get :slack-mentions repo 0)]
                        [antd.icons/format-painter-outlined]
                        [antd/typography-text updated-at]]
                       [antd/typography-link {:href license-url :target "_blank"} license-name]]]]))))]
