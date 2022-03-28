@@ -124,3 +124,11 @@
     (->> (jw/sql-format sqlmap)
          (jw/execute-one! db)
          (:downloads))))
+
+
+(defn select-libraries
+  [^HikariDataSource db]
+  (let [sqlmap {:select [:id :group-id :artifact-id]
+                :from   [:library]}]
+    (->> (jw/sql-format sqlmap)
+         (jw/execute! db))))

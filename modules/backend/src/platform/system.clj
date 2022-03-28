@@ -6,9 +6,12 @@
 
 
 (def default-modules
-  [:platform.system/jetty
-   :platform.system/database-migrator
-   :platform.system/github-client])
+  [::jetty
+   ::database-migrator
+   ::clojars-client
+   ::github-client
+   ::slack-client
+   ::twitter-client])
 
 
 (defmethod aero/reader 'ig/ref

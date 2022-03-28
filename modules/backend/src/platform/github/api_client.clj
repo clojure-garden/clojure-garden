@@ -45,10 +45,10 @@
 (defn init
   "Initialize the module. This function must be called before calling
   all other public functions related to the GitHub API requests."
-  [{:keys [service-name github-graphql-url oauth-token] :as config}]
+  [{:keys [service-name graphql-url oauth-token] :as config}]
   (swap! settings merge config)
   (re-graph/init service-name
-                 {:http {:url github-graphql-url
+                 {:http {:url  graphql-url
                          :impl {:oauth-token oauth-token
                                 :method :post
                                 :content-type :json}
@@ -399,10 +399,10 @@
   ([repo-owner repo-name]
    (get-contributor-count repo-owner repo-name false))
   ([repo-owner repo-name include-anon]
-   (let [{:keys [github-rest-url oauth-token]} @settings
+   (let [{:keys [rest-url oauth-token]} @settings
          params {:per_page 1 :anon include-anon}]
      (safe
-       (-> (build-url github-rest-url "repos" repo-owner repo-name "contributors")
+       (-> (build-url rest-url "repos" repo-owner repo-name "contributors")
            (request-rest on-github-get-contributor-count-handler
                          {:per_page 1
                           :anon include-anon
@@ -416,9 +416,9 @@
    detected code of conduct, detected license, and the presence of ISSUE_TEMPLATE,
    PULL_REQUEST_TEMPLATE, README, and CONTRIBUTING files."
   [repo-owner repo-name]
-  (let [{:keys [github-rest-url oauth-token]} @settings]
+  (let [{:keys [rest-url oauth-token]} @settings]
     (safe
-      (-> (build-url github-rest-url "repos" repo-owner repo-name "community/profile")
+      (-> (build-url rest-url "repos" repo-owner repo-name "community/profile")
           (request-rest on-github-get-community-metrics-handler {:oauth-token oauth-token}))
       #(not-found-response-exception-handler % "Failed to fetch metrics!"))))
 

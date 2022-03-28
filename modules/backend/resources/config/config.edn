@@ -35,8 +35,25 @@
                                                           :stage   #long #env DATABASE_PORT}
                             :register-mbeans             false}
 
- :platform.system/github-client {:server-name                 :service-github
-                                 :github-graphql-url          "https://api.github.com/graphql"
-                                 :github-rest-url             "https://api.github.com"
-                                 :oauth-token        #profile {:develop   #env BACKEND_GITHUB_OAUTH_TOKEN
-                                                               :stage     #env GITHUB_OAUTH_TOKEN}}}
+ :platform.system/github-client  {:service-name                :service-github
+                                  :graphql-url                 "https://api.github.com/graphql"
+                                  :rest-url                    "https://api.github.com"
+                                  :oauth-token        #profile {:develop   #env BACKEND_GITHUB_OAUTH_TOKEN
+                                                                :stage     #env GITHUB_OAUTH_TOKEN}}
+
+ :platform.system/clojars-client {:service-name                :service-clojars
+                                  :repo-url                    "https://clojars.org/repo"
+                                  :rest-url                    "https://clojars.org/api"}
+
+
+ :platform.system/twitter-client {:service-name                :service-twitter
+                                  :rest-url                    "https://api.twitter.com/2"
+                                  :oauth-token        #profile {:develop   #env BACKEND_TWITTER_OAUTH_TOKEN
+                                                                :stage     #env TWITTER_OAUTH_TOKEN}}
+
+ :platform.system/slack-client   {:service-name                :service-slack
+                                  :rest-url                    "https://slack.com/api"
+                                  :oauth-token-user   #profile {:develop   #env BACKEND_SLACK_OAUTH_TOKEN_USER
+                                                                :stage     #env SLACK_OAUTH_TOKEN_USER}
+                                  :oauth-token-bot    #profile {:develop   #env BACKEND_SLACK_OAUTH_TOKEN_BOT
+                                                                :stage     #env SLACK_OAUTH_TOKEN_BOT}}}
