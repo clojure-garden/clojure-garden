@@ -1,6 +1,6 @@
 (ns platform.slack.api-client
   (:require
-    [platform.common :refer [request-rest build-url transform-to-kebab-keywords
+    [platform.common :refer [request-rest build-url
                              safe not-found-response-exception-handler]]))
 
 
@@ -46,8 +46,8 @@
 (defn search-archived-messages
   [query]
   (let [{:keys [zulip-rest-url oauth-token-zulip-user]} @settings
-        url (build-url rest-url "search.messages")
-        options {:oauth-token oauth-token-user
+        url (build-url zulip-rest-url "search.messages")
+        options {:oauth-token oauth-token-zulip-user
                  :query-params {:query query
                                 :count 2
                                 :cursor "*"}}]
