@@ -5,5 +5,5 @@ CREATE TABLE IF NOT EXISTS version (
 	library_id   UUID NOT NULL,
 	PRIMARY KEY  (id),
 	FOREIGN KEY  (library_id) REFERENCES library(id),
-	UNIQUE       (library_id, name)
+	UNIQUE       (name, library_id)
 );
