@@ -4,10 +4,7 @@
     [clojure.tools.logging :as log]
     [platform.clojars.clojars-sql :as clojars-sql]
     [platform.twitter.api-client :as twitter-client]
-    [platform.twitter.sql.tweet :as tweet-sql])
-  (:import
-    (clojure.lang
-      ExceptionInfo)))
+    [platform.twitter.sql.tweet :as tweet-sql]))
 
 
 (defn pull-tweets
@@ -18,7 +15,7 @@
     (log/info (format "%d tweets pulled!" tweet-count))))
 
 
-(defn pull-repository-info-all-handler
+(defn pull-tweets-all-handler
   [req]
   (async/thread
     (log/info "Getting a list of libraries...")

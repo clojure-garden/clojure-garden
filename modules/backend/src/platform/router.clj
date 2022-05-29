@@ -6,6 +6,7 @@
     [platform.github.github-ctl :as dev-github-handlers]
     [platform.system.web.middleware.context :as middleware.context]
     [platform.system.web.middleware.cors :as middleware.cors]
+    [platform.twitter.twitter-ctl :as dev-twitter-handlers]
     [reitit.coercion.malli :as coercion.malli]
     [reitit.dev.pretty :as pretty]
     [reitit.middleware :as middleware]
@@ -94,7 +95,8 @@
          ["/dev"
           ["/pull" {:middleware [[:wrap-context ctx]]}
            ["/github"  {:get {:handler dev-github-handlers/pull-repository-info-all-handler}}]
-           ["/clojars" {:get {:handler dev-clojars-handlers/pull-artifact-info-all-handler}}]]]
+           ["/clojars" {:get {:handler dev-clojars-handlers/pull-artifact-info-all-handler}}]
+           ["/twitter" {:get {:handler dev-twitter-handlers/pull-tweets-all-handler}}]]]
          ["/health"
           ["/alive" {:get (constantly {:status 200})}]
           ["/ready" {:get (constantly {:status 200})}]]
