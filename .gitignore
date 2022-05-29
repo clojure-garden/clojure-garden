@@ -2,6 +2,7 @@
 .cpcache
 .shadow-cljs
 .idea
+.run
 coverage
 deployment/digitalocean/data
 deployment/digitalocean/proxy/etc/ssl
