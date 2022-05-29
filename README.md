@@ -143,10 +143,11 @@ We want to fast-track the Clojure onboarding process and make it enjoyable and s
 - [x] Write a good README
 - [x] **\[devops\]** Configure GitHub actions
 - [x] **\[frontend\]** Bootstrap the project frontend module
+- [ ] **\[backend\]** Create a Slack API client to collect Clojure library mention context
+- [x] **\[backend\]** Create a Twitter API client to collect Clojure library mention context
+- [ ] **\[backend\]** Create an orchestrator for the data loading modules
 - [ ] **\[backend\]** **\[frontend\]** Create custom library grouping by tags
 - [ ] **\[frontend\]** Create basic charts and tables
-- [ ] **\[backend\]** Create a Slack API client to collect Clojure library mention context
-- [ ] **\[backend\]** Create a Twitter API client to collect Clojure library mention context
 - [ ] **\[frontend\]** **\[backend\]** Implement library search
 - [ ] **\[backend\]** **\[frontend\]** Implement of custom library ratings
 - [ ] **\[backend\]** **\[frontend\]** implement a personal account with the ability to create your own charts and subscriptions
@@ -169,14 +170,15 @@ https://youtu.be/bzSJ0EKLUZg
 
 ## Core team
 
-[Artem Barmin](https://github.com/artem-barmin-dev)  
-[Ilshat Sultanov](https://github.com/just-sultanov)  
-[Volodymyr Pavliuk](https://github.com/volodymyrpavliuk)  
-[Gleb Yeliseev](https://github.com/devleifr)  
-[Inna Kovalenko](https://github.com/innakovalenko)
+[Artem Barmin](https://github.com/artem-barmin) \
+[Inna Kovalenko](https://github.com/innakovalenko) \
+[Anastasia Gretchenko](https://github.com/Agretchenko) \
+[Ilshat Sultanov](https://github.com/just-sultanov) \
+[Gleb Yeliseev](https://github.com/devleifr) \
+[Volodymyr Pavliuk](https://github.com/volodymyrpavliuk)
 
 ## Copyright & License
 
 The MIT License (MIT)
 
-Copyright © 2021 Freshcode LTD
+Copyright © 2021-2022 Freshcode LTD
